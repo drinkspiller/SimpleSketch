@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -9,5 +9,4 @@ import {CommonModule} from '@angular/common';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'ngSimpleSketch';
 }
