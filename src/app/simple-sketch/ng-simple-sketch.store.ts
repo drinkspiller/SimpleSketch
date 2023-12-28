@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ComponentStore} from '@ngrx/component-store';
 import {Observable, tap} from 'rxjs';
 
@@ -13,7 +13,7 @@ export interface SimpleSketchState {
   startY: number;
 }
 
-export const INITIAL_STATE:SimpleSketchState = {
+export const INITIAL_STATE: SimpleSketchState = {
   canvasBackgroundColor: '#000',
   canvasOffsetX: 0,
   canvasOffsetY: 0,
@@ -22,17 +22,28 @@ export const INITIAL_STATE:SimpleSketchState = {
   lineWidth: 5,
   startX: 0,
   startY: 0,
-}
+};
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class NgSimpleSketchStore extends ComponentStore<SimpleSketchState>{
-
+export class NgSimpleSketchStore extends ComponentStore<SimpleSketchState> {
   // Selectors
-  readonly canvasOffsetX$: Observable<number> = this.select(state => state.canvasOffsetX);
-  readonly isPainting$: Observable<boolean> = this.select(state => state.isPainting);
-  readonly lineWidth$: Observable<number> = this.select(state => state.lineWidth);
+  readonly canvasOffsetX$: Observable<number> = this.select(
+    state => state.canvasOffsetX
+  );
+
+  readonly canvasOffsetY$: Observable<number> = this.select(
+    state => state.canvasOffsetY
+  );
+
+  readonly isPainting$: Observable<boolean> = this.select(
+    state => state.isPainting
+  );
+
+  readonly lineWidth$: Observable<number> = this.select(
+    state => state.lineWidth
+  );
 
   // Updaters
   readonly updateIsPainting = this.updater((state, isPainting: boolean) => ({
@@ -40,15 +51,19 @@ export class NgSimpleSketchStore extends ComponentStore<SimpleSketchState>{
     isPainting,
   }));
 
-  readonly updateCanvasOffsetX = this.updater((state, newCanvasOffsetX: number) => ({
-    ...state,
-    canvasOffsetX: newCanvasOffsetX,
-  }));
+  readonly updateCanvasOffsetX = this.updater(
+    (state, newCanvasOffsetX: number) => ({
+      ...state,
+      canvasOffsetX: newCanvasOffsetX,
+    })
+  );
 
-  readonly updateCanvasOffsetY = this.updater((state, newCanvasOffsetY: number) => ({
-    ...state,
-    canvasOffsetY: newCanvasOffsetY,
-  }));
+  readonly updateCanvasOffsetY = this.updater(
+    (state, newCanvasOffsetY: number) => ({
+      ...state,
+      canvasOffsetY: newCanvasOffsetY,
+    })
+  );
 
   readonly updateStartX = this.updater((state, newStartX: number) => ({
     ...state,
@@ -61,15 +76,22 @@ export class NgSimpleSketchStore extends ComponentStore<SimpleSketchState>{
   }));
 
   // Effects
-  readonly init = this.effect((data$: Observable<[HTMLCanvasElement, string, string]>) => {
-    return data$.pipe(tap(([canvas, width, height]) => {
-      canvas.style.width = width;
-      canvas.style.height = height;
+  readonly init = this.effect(
+    (data$: Observable<[HTMLCanvasElement, string, string]>) => {
+      return data$.pipe(
+        tap(([canvas, width, height]) => {
+          canvas.style.width = width;
+          canvas.style.height = height;
 
-      this.updateCanvasOffsetX(canvas.offsetLeft);
-      this.updateCanvasOffsetY(canvas.offsetTop);
-    }));
-  });
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+
+          this.updateCanvasOffsetX(canvas.offsetLeft);
+          this.updateCanvasOffsetY(canvas.offsetTop);
+        })
+      );
+    }
+  );
 
   constructor() {
     super(INITIAL_STATE);

@@ -1,6 +1,14 @@
-import {AfterViewInit, Component, ElementRef, InjectionToken, Input, ViewChild, inject} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  ViewChild,
+} from '@angular/core';
+import {combineLatest, fromEvent, map, take, takeUntil, tap} from 'rxjs';
+
 import {NgSimpleSketchStore} from './ng-simple-sketch.store';
-import {combineLatest, fromEvent, take, tap} from 'rxjs';
 
 @Component({
   selector: 'ng-simple-sketch',
@@ -10,60 +18,80 @@ import {combineLatest, fromEvent, take, tap} from 'rxjs';
   templateUrl: './ng-simple-sketch.component.html',
   styleUrl: './ng-simple-sketch.component.scss',
 })
-export class NgSimpleSketchComponent implements AfterViewInit{
+export class NgSimpleSketchComponent implements AfterViewInit {
+  @Input() height = '100%';
+  @Input() width = '100%';
+  @Input() toolbar = true;
 
-  @Input() height: string = '100%';
-  @Input() width: string = '100%';
-  @Input() toolbar: boolean = true;
+  @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement> | null = null;
 
-  @ViewChild('canvas') canvas:ElementRef<HTMLCanvasElement> | null = null;
-
-  private context: CanvasRenderingContext2D|null = null;
-  private readonly store: NgSimpleSketchStore = inject(NgSimpleSketchStore);
+  private context: CanvasRenderingContext2D | null = null;
+  private readonly simpleSketchStore: NgSimpleSketchStore =
+    inject(NgSimpleSketchStore);
 
   ngAfterViewInit(): void {
     if (this.canvas === null) return;
     this.context = this.canvas.nativeElement.getContext('2d');
-    this.store.init([this.canvas.nativeElement, this.width, this.height]);
+    this.simpleSketchStore.init([
+      this.canvas.nativeElement,
+      this.width,
+      this.height,
+    ]);
     this.configureEventListeners(this.canvas.nativeElement);
   }
 
   configureEventListeners(canvas: HTMLCanvasElement) {
     fromEvent(canvas, 'mousedown')
-      .pipe(tap(event => {
-        debugger;
-      }));
-    // canvas.addEventListener('mousedown', (e) => {
-    //     isPainting = true;
-    //     startX = e.clientX;
-    //     startY = e.clientY;
-    // });
+      .pipe(
+        takeUntil(this.simpleSketchStore.destroy$),
+        map((event: Event) => event as MouseEvent),
+        tap((event: MouseEvent) => {
+          this.simpleSketchStore.updateIsPainting(true);
+          this.simpleSketchStore.updateStartX(event.clientX);
+          this.simpleSketchStore.updateStartY(event.clientY);
+        })
+      )
+      .subscribe();
 
-    // canvas.addEventListener('mouseup', e => {
-    //     isPainting = false;
-    //     ctx.stroke();
-    //     ctx.beginPath();
-    // });
+    fromEvent(canvas, 'mouseup')
+      .pipe(
+        takeUntil(this.simpleSketchStore.destroy$),
+        tap(() => {
+          this.simpleSketchStore.updateIsPainting(false);
 
-    // canvas.addEventListener('mousemove', draw);
+          if (this.context === null) return;
+          this.context.stroke();
+          this.context.beginPath();
+        })
+      )
+      .subscribe();
+
+    fromEvent(canvas, 'mousemove')
+      .pipe(
+        takeUntil(this.simpleSketchStore.destroy$),
+        map((event: Event) => event as MouseEvent),
+        tap((event: MouseEvent) => {
+          this.draw(event);
+        })
+      )
+      .subscribe();
   }
-
 
   draw(event: MouseEvent) {
     combineLatest([
-      this.store.isPainting$,
-      this.store.lineWidth$,
-      this.store.canvasOffsetX$,
-    ]).pipe(
-        take(1),
-      ).subscribe(([isPainting, lineWidth, canvasOffsetX])=>{
-      if(!isPainting || this.context === null) return;
+      this.simpleSketchStore.isPainting$,
+      this.simpleSketchStore.lineWidth$,
+      this.simpleSketchStore.canvasOffsetX$,
+    ])
+      .pipe(take(1))
+      .subscribe(([isPainting, lineWidth, canvasOffsetX]) => {
+        if (!isPainting || this.context === null) return;
 
-      this.context.lineWidth = lineWidth;
-      this.context.lineCap = 'round';
+        this.context.lineWidth = lineWidth;
+        this.context.lineCap = 'round';
 
-      this.context.lineTo(event.clientX - canvasOffsetX, event.clientY);
-      this.context.stroke();
-    });
-}
+        this.context.lineTo(event.clientX - canvasOffsetX, event.clientY);
+        this.context.stroke();
+      });
+  }
 }

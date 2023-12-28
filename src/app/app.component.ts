@@ -5,10 +5,7 @@ import {NgSimpleSketchComponent} from './simple-sketch/ng-simple-sketch.componen
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    CommonModule,
-    NgSimpleSketchComponent,
-  ],
+  imports: [CommonModule, NgSimpleSketchComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
