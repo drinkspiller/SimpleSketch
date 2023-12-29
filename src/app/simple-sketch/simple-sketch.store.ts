@@ -78,21 +78,20 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
   }));
 
   // Effects
-  readonly init = this.effect(
-    (data$: Observable<[HTMLCanvasElement, string, string]>) => {
-      return data$.pipe(
-        tap(([canvas, width, height]) => {
-          this.context = canvas.getContext('2d');
+  readonly init = this.effect((canvas$: Observable<HTMLCanvasElement>) => {
+    return canvas$.pipe(
+      tap(canvas => {
+        this.context = canvas.getContext('2d');
 
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
+        const hostElement = canvas.parentElement as HTMLElement;
+        canvas.width = hostElement.offsetWidth;
+        canvas.height = hostElement.offsetHeight;
 
-          this.updateCanvasOffsetX(canvas.offsetLeft);
-          this.updateCanvasOffsetY(canvas.offsetTop);
-        })
-      );
-    }
-  );
+        this.updateCanvasOffsetX(canvas.offsetLeft);
+        this.updateCanvasOffsetY(canvas.offsetTop);
+      })
+    );
+  });
 
   readonly startSketch = this.effect((event$: Observable<MouseEvent>) => {
     return event$.pipe(

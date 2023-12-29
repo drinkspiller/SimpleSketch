@@ -11,7 +11,7 @@ import {SimpleSketchStore} from './simple-sketch.store';
 import {CommonModule} from '@angular/common';
 
 @Component({
-  selector: 'ng-simple-sketch',
+  selector: 'simple-sketch',
   standalone: true,
   imports: [CommonModule],
   providers: [SimpleSketchStore],
@@ -19,8 +19,6 @@ import {CommonModule} from '@angular/common';
   styleUrl: './simple-sketch.component.scss',
 })
 export class SimpleSketchComponent implements AfterViewInit {
-  @Input() height = '100%';
-  @Input() width = '100%';
   @Input() toolbar = true;
 
   @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement> | null = null;
@@ -30,11 +28,7 @@ export class SimpleSketchComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.canvas === null) return;
-    this.simpleSketchStore.init([
-      this.canvas.nativeElement,
-      this.width,
-      this.height,
-    ]);
+    this.simpleSketchStore.init(this.canvas.nativeElement);
   }
 
   sketch(event: MouseEvent) {
