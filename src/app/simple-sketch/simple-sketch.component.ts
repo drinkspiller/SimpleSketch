@@ -10,6 +10,7 @@ import {
 import {SimpleSketchStore} from './simple-sketch.store';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {ReplaySubject} from 'rxjs';
 
 @Component({
   selector: 'simple-sketch',
@@ -28,6 +29,9 @@ export class SimpleSketchComponent implements AfterViewInit {
 
   private readonly simpleSketchStore: SimpleSketchStore =
     inject(SimpleSketchStore);
+  protected readonly backgroundColor$ =
+    this.simpleSketchStore.canvasBackgroundColor$;
+  protected readonly paintColor$ = this.simpleSketchStore.canvasPaintColor$;
 
   ngAfterViewInit(): void {
     if (this.canvas === null) return;

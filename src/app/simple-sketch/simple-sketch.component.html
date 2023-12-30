@@ -4,8 +4,12 @@
     (mousemove)="sketch($event)">
 </canvas>
 
-<input type="color" [(ngModel)]="backgroundColor" class="colorpicker"
-    (change)="changeBackgroundColor($event)">
-&nbsp;
-<input type="color" [(ngModel)]="paintColor" class="colorpicker"
-    (change)="changePaintColor($event)">
+backgroundColor$: {{backgroundColor$ | async}}
+<input type="color"
+      [ngModel]="backgroundColor$ | async"
+      (change)="changeBackgroundColor($event)">
+<br>
+paintColor$: {{paintColor$ | async}}
+<input type="color"
+      [ngModel]="paintColor$ | async"
+      (change)="changePaintColor($event)">
