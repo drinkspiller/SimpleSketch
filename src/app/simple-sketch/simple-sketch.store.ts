@@ -1,13 +1,14 @@
 import {Injectable} from '@angular/core';
 import {ComponentStore} from '@ngrx/component-store';
-import {Observable, combineLatest, tap} from 'rxjs';
+import {BehaviorSubject, Observable, combineLatest, filter, tap} from 'rxjs';
+import {SimpleSketchComponent} from './simple-sketch.component';
 
 export interface SimpleSketchState {
   canvasBackgroundColor: string;
   canvasOffsetX: number;
   canvasOffsetY: number;
   canvasPaintColor: string;
-  isPainting: boolean;
+  isSketching: boolean;
   lineWidth: number;
   startX: number;
   startY: number;
@@ -18,19 +19,29 @@ export const INITIAL_STATE: SimpleSketchState = {
   canvasOffsetX: 0,
   canvasOffsetY: 0,
   canvasPaintColor: '#fff',
-  isPainting: false,
+  isSketching: false,
   lineWidth: 5,
   startX: 0,
   startY: 0,
 };
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: SimpleSketchComponent,
 })
 export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
-  private context: CanvasRenderingContext2D | null = null;
+  private canvas = new BehaviorSubject<HTMLCanvasElement | null>(null);
+
+  private context = new BehaviorSubject<CanvasRenderingContext2D | null>(null);
 
   // Selectors
+  readonly canvasBackgroundColor$: Observable<string> = this.select(
+    state => state.canvasBackgroundColor
+  );
+
+  readonly canvasPaintColor$: Observable<string> = this.select(
+    state => state.canvasPaintColor
+  );
+
   readonly canvasOffsetX$: Observable<number> = this.select(
     state => state.canvasOffsetX
   );
@@ -39,8 +50,8 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
     state => state.canvasOffsetY
   );
 
-  readonly isPainting$: Observable<boolean> = this.select(
-    state => state.isPainting
+  readonly isSketching$: Observable<boolean> = this.select(
+    state => state.isSketching
   );
 
   readonly lineWidth$: Observable<number> = this.select(
@@ -48,9 +59,16 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
   );
 
   // Updaters
-  readonly updateIsPainting = this.updater((state, isPainting: boolean) => ({
+  readonly updateBackGroundColor = this.updater(
+    (state, newBackgroundColor: string) => ({
+      ...state,
+      canvasBackgroundColor: newBackgroundColor,
+    })
+  );
+
+  readonly updateIsSketching = this.updater((state, isSketching: boolean) => ({
     ...state,
-    isPainting,
+    isSketching,
   }));
 
   readonly updateCanvasOffsetX = this.updater(
@@ -67,6 +85,11 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
     })
   );
 
+  readonly updatePaintColor = this.updater((state, newPaintColor: string) => ({
+    ...state,
+    canvasPaintColor: newPaintColor,
+  }));
+
   readonly updateStartX = this.updater((state, newStartX: number) => ({
     ...state,
     startX: newStartX,
@@ -78,25 +101,76 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
   }));
 
   // Effects
-  readonly init = this.effect((canvas$: Observable<HTMLCanvasElement>) => {
-    return canvas$.pipe(
-      tap(canvas => {
-        this.context = canvas.getContext('2d');
-
-        const hostElement = canvas.parentElement as HTMLElement;
-        canvas.width = hostElement.offsetWidth;
-        canvas.height = hostElement.offsetHeight;
-
-        this.updateCanvasOffsetX(canvas.offsetLeft);
-        this.updateCanvasOffsetY(canvas.offsetTop);
+  readonly applyCanvasBackgroundColor = this.effect(() => {
+    return combineLatest([this.canvasBackgroundColor$, this.canvas]).pipe(
+      tap(([color, canvas]) => {
+        if (canvas) {
+          canvas.style.backgroundColor = color;
+        }
       })
+    );
+  });
+
+  readonly init = this.effect(
+    (data$: Observable<[HTMLCanvasElement, string, string]>) => {
+      return data$.pipe(
+        tap(([canvas, backgroundColor, paintColor]) => {
+          const context = canvas.getContext('2d');
+
+          this.canvas.next(canvas);
+          this.context.next(context);
+
+          const hostElement = canvas.parentElement as HTMLElement;
+          canvas.width = hostElement.offsetWidth;
+          canvas.height = hostElement.offsetHeight;
+
+          this.updateCanvasOffsetX(canvas.offsetLeft);
+          this.updateCanvasOffsetY(canvas.offsetTop);
+          this.updateBackGroundColor(backgroundColor);
+          console.log(`paintColor: ${paintColor}`);
+          this.updatePaintColor(paintColor);
+
+          this.applyCanvasBackgroundColor();
+        })
+      );
+    }
+  );
+
+  readonly sketch = this.effect((event$: Observable<MouseEvent>) => {
+    return combineLatest([
+      event$,
+      this.context,
+      this.isSketching$,
+      this.lineWidth$,
+      this.canvasOffsetX$,
+      this.canvasPaintColor$,
+    ]).pipe(
+      tap(
+        ([
+          event,
+          context,
+          isSketching,
+          lineWidth,
+          canvasOffsetX,
+          canvasPaintColor,
+        ]) => {
+          if (!isSketching || context === null) return;
+
+          context.lineWidth = lineWidth;
+          context.lineCap = 'round';
+          context.strokeStyle = canvasPaintColor;
+
+          context.lineTo(event.clientX - canvasOffsetX, event.clientY);
+          context.stroke();
+        }
+      )
     );
   });
 
   readonly startSketch = this.effect((event$: Observable<MouseEvent>) => {
     return event$.pipe(
       tap(event => {
-        this.updateIsPainting(true);
+        this.updateIsSketching(true);
         this.updateStartX(event.clientX);
         this.updateStartY(event.clientY);
       })
@@ -104,32 +178,13 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
   });
 
   readonly stopSketch = this.effect((event$: Observable<MouseEvent>) => {
-    return event$.pipe(
-      tap(() => {
-        this.updateIsPainting(false);
+    return combineLatest([event$, this.context]).pipe(
+      tap(([, context]) => {
+        this.updateIsSketching(false);
 
-        if (this.context === null) return;
-        this.context.stroke();
-        this.context.beginPath();
-      })
-    );
-  });
-
-  readonly sketch = this.effect((event$: Observable<MouseEvent>) => {
-    return combineLatest([
-      event$,
-      this.isPainting$,
-      this.lineWidth$,
-      this.canvasOffsetX$,
-    ]).pipe(
-      tap(([event, isPainting, lineWidth, canvasOffsetX]) => {
-        if (!isPainting || this.context === null) return;
-
-        this.context.lineWidth = lineWidth;
-        this.context.lineCap = 'round';
-
-        this.context.lineTo(event.clientX - canvasOffsetX, event.clientY);
-        this.context.stroke();
+        if (context === null) return;
+        context.stroke();
+        context.beginPath();
       })
     );
   });

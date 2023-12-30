@@ -19,7 +19,9 @@ import {CommonModule} from '@angular/common';
   styleUrl: './simple-sketch.component.scss',
 })
 export class SimpleSketchComponent implements AfterViewInit {
-  @Input() toolbar = true;
+  @Input({required: false}) toolbar = true;
+  @Input({required: false}) backgroundColor = '#fff';
+  @Input({required: false}) paintColor = '#000';
 
   @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement> | null = null;
 
@@ -28,7 +30,11 @@ export class SimpleSketchComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.canvas === null) return;
-    this.simpleSketchStore.init(this.canvas.nativeElement);
+    this.simpleSketchStore.init([
+      this.canvas.nativeElement,
+      this.backgroundColor,
+      this.paintColor,
+    ]);
   }
 
   sketch(event: MouseEvent) {
