@@ -4,12 +4,16 @@
     (mousemove)="sketch($event)">
 </canvas>
 
-backgroundColor$: {{backgroundColor$ | async}}
-<input type="color"
+  <mat-label>Background color</mat-label>
+  <input matNativeControl
+      type="color"
       [ngModel]="backgroundColor$ | async"
       (change)="changeBackgroundColor($event)">
 <br>
-paintColor$: {{paintColor$ | async}}
-<input type="color"
-      [ngModel]="paintColor$ | async"
+  <mat-label>Paint color</mat-label>
+  <input matNativeControl
+      type="color"
+      [ngModel]="(paintColor$ | async)"
+      [value]="(paintColor$ | async)"
       (change)="changePaintColor($event)">
+

@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   inject,
@@ -10,28 +11,35 @@ import {
 import {SimpleSketchStore} from './simple-sketch.store';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {ReplaySubject} from 'rxjs';
+import {MatInputModule} from '@angular/material/input';
+import {shareReplay} from 'rxjs/operators';
 
 @Component({
   selector: 'simple-sketch',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatInputModule],
   providers: [SimpleSketchStore],
   templateUrl: './simple-sketch.component.html',
   styleUrl: './simple-sketch.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SimpleSketchComponent implements AfterViewInit {
   @Input({required: false}) toolbar = true;
-  @Input({required: false}) backgroundColor = '#fff';
-  @Input({required: false}) paintColor = '#000';
+  @Input({required: false}) backgroundColor = '#ffffff';
+  @Input({required: false}) paintColor = '#000000';
 
   @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement> | null = null;
 
   private readonly simpleSketchStore: SimpleSketchStore =
     inject(SimpleSketchStore);
   protected readonly backgroundColor$ =
-    this.simpleSketchStore.canvasBackgroundColor$;
-  protected readonly paintColor$ = this.simpleSketchStore.canvasPaintColor$;
+    this.simpleSketchStore.canvasBackgroundColor$.pipe(
+      shareReplay({bufferSize: 1, refCount: true})
+    );
+  protected readonly paintColor$ =
+    this.simpleSketchStore.canvasPaintColor$.pipe(
+      shareReplay({bufferSize: 1, refCount: true})
+    );
 
   ngAfterViewInit(): void {
     if (this.canvas === null) return;

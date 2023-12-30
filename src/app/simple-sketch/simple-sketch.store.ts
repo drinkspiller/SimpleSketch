@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ComponentStore} from '@ngrx/component-store';
-import {BehaviorSubject, Observable, combineLatest, filter, tap} from 'rxjs';
+import {BehaviorSubject, Observable, combineLatest, tap} from 'rxjs';
 import {SimpleSketchComponent} from './simple-sketch.component';
 
 export interface SimpleSketchState {
@@ -15,10 +15,10 @@ export interface SimpleSketchState {
 }
 
 export const INITIAL_STATE: SimpleSketchState = {
-  canvasBackgroundColor: '#000',
+  canvasBackgroundColor: '#000000',
   canvasOffsetX: 0,
   canvasOffsetY: 0,
-  canvasPaintColor: '#fff',
+  canvasPaintColor: '#ffffff',
   isSketching: false,
   lineWidth: 5,
   startX: 0,
