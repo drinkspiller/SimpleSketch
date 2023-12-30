@@ -3,3 +3,9 @@
     (mouseup)="stopSketch($event)"
     (mousemove)="sketch($event)">
 </canvas>
+
+<input type="color" [(ngModel)]="backgroundColor" class="colorpicker"
+    (change)="changeBackgroundColor($event)">
+&nbsp;
+<input type="color" [(ngModel)]="paintColor" class="colorpicker"
+    (change)="changePaintColor($event)">

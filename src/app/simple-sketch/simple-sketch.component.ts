@@ -9,11 +9,12 @@ import {
 
 import {SimpleSketchStore} from './simple-sketch.store';
 import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'simple-sketch',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   providers: [SimpleSketchStore],
   templateUrl: './simple-sketch.component.html',
   styleUrl: './simple-sketch.component.scss',
@@ -35,6 +36,18 @@ export class SimpleSketchComponent implements AfterViewInit {
       this.backgroundColor,
       this.paintColor,
     ]);
+  }
+
+  changeBackgroundColor(event: Event) {
+    this.simpleSketchStore.updateBackGroundColor(
+      (event.target as HTMLInputElement).value
+    );
+  }
+
+  changePaintColor(event: Event) {
+    this.simpleSketchStore.updatePaintColor(
+      (event.target as HTMLInputElement).value
+    );
   }
 
   sketch(event: MouseEvent) {
