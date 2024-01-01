@@ -1,0 +1,13 @@
+<p>simple-sketch-toolbar.component works!</p>
+<mat-label>Background color</mat-label>
+  <input matNativeControl
+      type="color"
+      [ngModel]="backgroundColor$ | async"
+      (input)="changeBackgroundColor($event)">
+<br>
+<mat-label>Paint color</mat-label>
+  <input matNativeControl
+      type="color"
+      [ngModel]="(paintColor$ | async)"
+      [value]="(paintColor$ | async)"
+      (input)="changePaintColor($event)">
