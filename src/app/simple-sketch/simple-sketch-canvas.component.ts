@@ -16,7 +16,7 @@ import {shareReplay} from 'rxjs/operators';
 import {SimpleSketchToolbarComponent} from './simple-sketch-toolbar.component';
 
 @Component({
-  selector: 'simple-sketch',
+  selector: 'simple-sketch-canvas',
   standalone: true,
   imports: [
     CommonModule,
@@ -67,15 +67,15 @@ export class SimpleSketchCanvasComponent implements AfterViewInit {
     );
   }
 
-  sketch(event: MouseEvent) {
+  sketch(event: MouseEvent | TouchEvent) {
     this.simpleSketchStore.sketch(event);
   }
 
-  startSketch(event: MouseEvent) {
+  startSketch(event: MouseEvent | TouchEvent) {
     this.simpleSketchStore.startSketch(event);
   }
 
-  stopSketch(event: MouseEvent) {
+  stopSketch(event: MouseEvent | TouchEvent) {
     this.simpleSketchStore.stopSketch(event);
   }
 }

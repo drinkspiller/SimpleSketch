@@ -1,7 +1,11 @@
-<simple-sketch-toolbar></simple-sketch-toolbar>
+<!-- <simple-sketch-toolbar></simple-sketch-toolbar>-->
 <canvas #canvas
     (mousedown)="startSketch($event)"
+    (touchstart)="startSketch($event)"
     (mouseup)="stopSketch($event)"
-    (mousemove)="sketch($event)">
+    (touchend)="stopSketch($event)"
+    (mousemove)="sketch($event)"
+    (touchmove)="sketch($event)"
+>
 </canvas>
 

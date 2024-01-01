@@ -137,7 +137,6 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
           this.updateCanvasOffsetX(canvas.offsetLeft);
           this.updateCanvasOffsetY(canvas.offsetTop);
           this.updateBackGroundColor(backgroundColor);
-          console.log(`paintColor: ${paintColor}`);
           this.updatePaintColor(paintColor);
 
           this.applyBackgroundColor();
@@ -146,58 +145,101 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
     }
   );
 
-  readonly sketch = this.effect((event$: Observable<MouseEvent>) => {
-    return combineLatest([
-      event$,
-      this.context,
-      this.isSketching$,
-      this.lineWidth$,
-      this.canvasOffsetX$,
-      this.paintColor$,
-    ]).pipe(
-      tap(
-        ([
-          event,
-          context,
-          isSketching,
-          lineWidth,
-          canvasOffsetX,
-          paintColor,
-        ]) => {
-          if (!isSketching || context === null) return;
+  readonly sketch = this.effect(
+    (event$: Observable<MouseEvent | TouchEvent>) => {
+      return combineLatest([
+        event$,
+        this.context,
+        this.isSketching$,
+        this.lineWidth$,
+        this.canvasOffsetX$,
+        this.canvasOffsetY$,
+        this.paintColor$,
+      ]).pipe(
+        tap(
+          ([
+            event,
+            context,
+            isSketching,
+            lineWidth,
+            canvasOffsetX,
+            canvasOffsetY,
+            paintColor,
+          ]) => {
+            if (!isSketching || context === null) return;
 
-          context.lineWidth = lineWidth;
-          context.lineCap = 'round';
-          context.strokeStyle = paintColor;
+            context.lineWidth = lineWidth;
+            context.lineCap = 'round';
+            context.strokeStyle = paintColor;
 
-          context.lineTo(event.clientX - canvasOffsetX, event.clientY);
+            const screenPosition = this.eventPosition(event);
+            context.lineTo(
+              screenPosition.x - canvasOffsetX,
+              screenPosition.y - canvasOffsetY
+            );
+            context.stroke();
+          }
+        )
+      );
+    }
+  );
+
+  readonly startSketch = this.effect(
+    (event$: Observable<MouseEvent | TouchEvent>) => {
+      return event$.pipe(
+        tap(event => {
+          const screenPosition = this.eventPosition(event);
+
+          this.updateIsSketching(true);
+          this.updateStartX(screenPosition.x);
+          this.updateStartY(screenPosition.y);
+        })
+      );
+    }
+  );
+
+  readonly stopSketch = this.effect(
+    (event$: Observable<MouseEvent | TouchEvent>) => {
+      return combineLatest([event$, this.context]).pipe(
+        tap(([, context]) => {
+          this.updateIsSketching(false);
+
+          if (context === null) return;
           context.stroke();
-        }
-      )
-    );
-  });
+          context.beginPath();
+        })
+      );
+    }
+  );
 
-  readonly startSketch = this.effect((event$: Observable<MouseEvent>) => {
-    return event$.pipe(
-      tap(event => {
-        this.updateIsSketching(true);
-        this.updateStartX(event.clientX);
-        this.updateStartY(event.clientY);
-      })
-    );
-  });
+  /**
+   * +-------------------------------------------+
+   * CLASS METHODS
+   * +-------------------------------------------+
+   */
 
-  readonly stopSketch = this.effect((event$: Observable<MouseEvent>) => {
-    return combineLatest([event$, this.context]).pipe(
-      tap(([, context]) => {
-        this.updateIsSketching(false);
+  /**
+   * Takes a mousemove or touchmove event and return the corresponding position
+   * on the screen where the event occurred.
+   */
+  private eventPosition(event: MouseEvent | TouchEvent): {
+    x: number;
+    y: number;
+  } {
+    const isTouchEvent = event instanceof TouchEvent;
 
-        if (context === null) return;
-        context.stroke();
-        context.beginPath();
-      })
-    );
-  });
+    const newX = isTouchEvent
+      ? (event as TouchEvent).touches[0].pageX
+      : (event as MouseEvent).clientX;
+    const newY = isTouchEvent
+      ? (event as TouchEvent).touches[0].pageY
+      : (event as MouseEvent).clientY;
+
+    return {
+      x: newX,
+      y: newY,
+    };
+  }
 
   constructor() {
     super(INITIAL_STATE);

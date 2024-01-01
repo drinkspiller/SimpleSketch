@@ -1,4 +1,10 @@
-simple-sketch {
-  height: 600px;
-  width: 800px;
+:host {
+  display: flex;
+  height: 100%;
+  height: 100%;
+}
+
+simple-sketch-canvas {
+  height: 100%;
+  width: 100%;
 }
