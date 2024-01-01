@@ -1,24 +1,23 @@
 import {Injectable} from '@angular/core';
 import {ComponentStore} from '@ngrx/component-store';
 import {BehaviorSubject, Observable, combineLatest, tap} from 'rxjs';
-import {SimpleSketchComponent} from './simple-sketch.component';
 
 export interface SimpleSketchState {
-  canvasBackgroundColor: string;
+  backgroundColor: string;
   canvasOffsetX: number;
   canvasOffsetY: number;
-  canvasPaintColor: string;
   isSketching: boolean;
   lineWidth: number;
+  paintColor: string;
   startX: number;
   startY: number;
 }
 
 export const INITIAL_STATE: SimpleSketchState = {
-  canvasBackgroundColor: '#000000',
+  backgroundColor: '#000000',
   canvasOffsetX: 0,
   canvasOffsetY: 0,
-  canvasPaintColor: '#ffffff',
+  paintColor: '#ffffff',
   isSketching: false,
   lineWidth: 5,
   startX: 0,
@@ -26,20 +25,23 @@ export const INITIAL_STATE: SimpleSketchState = {
 };
 
 @Injectable({
-  providedIn: SimpleSketchComponent,
+  providedIn: 'any',
 })
 export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
   private canvas = new BehaviorSubject<HTMLCanvasElement | null>(null);
-
   private context = new BehaviorSubject<CanvasRenderingContext2D | null>(null);
 
-  // Selectors
-  readonly canvasBackgroundColor$: Observable<string> = this.select(
-    state => state.canvasBackgroundColor
+  /**
+   * +-------------------------------------------+
+   * SELECTORS
+   * +-------------------------------------------+
+   */
+  readonly backgroundColor$: Observable<string> = this.select(
+    state => state.backgroundColor
   );
 
-  readonly canvasPaintColor$: Observable<string> = this.select(
-    state => state.canvasPaintColor
+  readonly paintColor$: Observable<string> = this.select(
+    state => state.paintColor
   );
 
   readonly canvasOffsetX$: Observable<number> = this.select(
@@ -58,11 +60,15 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
     state => state.lineWidth
   );
 
-  // Updaters
+  /**
+   * +-------------------------------------------+
+   * UPDATERS
+   * +-------------------------------------------+
+   */
   readonly updateBackGroundColor = this.updater(
     (state, newBackgroundColor: string) => ({
       ...state,
-      canvasBackgroundColor: newBackgroundColor,
+      backgroundColor: newBackgroundColor,
     })
   );
 
@@ -87,7 +93,7 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
 
   readonly updatePaintColor = this.updater((state, newPaintColor: string) => ({
     ...state,
-    canvasPaintColor: newPaintColor,
+    paintColor: newPaintColor,
   }));
 
   readonly updateStartX = this.updater((state, newStartX: number) => ({
@@ -100,9 +106,13 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
     startY: newStartY,
   }));
 
-  // Effects
-  readonly applyCanvasBackgroundColor = this.effect(() => {
-    return combineLatest([this.canvasBackgroundColor$, this.canvas]).pipe(
+  /**
+   * +-------------------------------------------+
+   * EFFECTS
+   * +-------------------------------------------+
+   */
+  readonly applyBackgroundColor = this.effect(() => {
+    return combineLatest([this.backgroundColor$, this.canvas]).pipe(
       tap(([color, canvas]) => {
         if (canvas) {
           canvas.style.backgroundColor = color;
@@ -130,7 +140,7 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
           console.log(`paintColor: ${paintColor}`);
           this.updatePaintColor(paintColor);
 
-          this.applyCanvasBackgroundColor();
+          this.applyBackgroundColor();
         })
       );
     }
@@ -143,7 +153,7 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
       this.isSketching$,
       this.lineWidth$,
       this.canvasOffsetX$,
-      this.canvasPaintColor$,
+      this.paintColor$,
     ]).pipe(
       tap(
         ([
@@ -152,13 +162,13 @@ export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
           isSketching,
           lineWidth,
           canvasOffsetX,
-          canvasPaintColor,
+          paintColor,
         ]) => {
           if (!isSketching || context === null) return;
 
           context.lineWidth = lineWidth;
           context.lineCap = 'round';
-          context.strokeStyle = canvasPaintColor;
+          context.strokeStyle = paintColor;
 
           context.lineTo(event.clientX - canvasOffsetX, event.clientY);
           context.stroke();

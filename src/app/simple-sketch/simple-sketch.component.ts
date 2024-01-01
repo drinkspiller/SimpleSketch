@@ -13,11 +13,17 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {shareReplay} from 'rxjs/operators';
+import {SimpleSketchToolbarComponent} from './simple-sketch-toolbar.component';
 
 @Component({
   selector: 'simple-sketch',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatInputModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatInputModule,
+    SimpleSketchToolbarComponent,
+  ],
   providers: [SimpleSketchStore],
   templateUrl: './simple-sketch.component.html',
   styleUrl: './simple-sketch.component.scss',
@@ -33,13 +39,12 @@ export class SimpleSketchComponent implements AfterViewInit {
   private readonly simpleSketchStore: SimpleSketchStore =
     inject(SimpleSketchStore);
   protected readonly backgroundColor$ =
-    this.simpleSketchStore.canvasBackgroundColor$.pipe(
+    this.simpleSketchStore.backgroundColor$.pipe(
       shareReplay({bufferSize: 1, refCount: true})
     );
-  protected readonly paintColor$ =
-    this.simpleSketchStore.canvasPaintColor$.pipe(
-      shareReplay({bufferSize: 1, refCount: true})
-    );
+  protected readonly paintColor$ = this.simpleSketchStore.paintColor$.pipe(
+    shareReplay({bufferSize: 1, refCount: true})
+  );
 
   ngAfterViewInit(): void {
     if (this.canvas === null) return;

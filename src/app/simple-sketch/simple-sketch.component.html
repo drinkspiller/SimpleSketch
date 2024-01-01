@@ -1,19 +1,7 @@
+<simple-sketch-toolbar></simple-sketch-toolbar>
 <canvas #canvas
     (mousedown)="startSketch($event)"
     (mouseup)="stopSketch($event)"
     (mousemove)="sketch($event)">
 </canvas>
-
-  <mat-label>Background color</mat-label>
-  <input matNativeControl
-      type="color"
-      [ngModel]="backgroundColor$ | async"
-      (change)="changeBackgroundColor($event)">
-<br>
-  <mat-label>Paint color</mat-label>
-  <input matNativeControl
-      type="color"
-      [ngModel]="(paintColor$ | async)"
-      [value]="(paintColor$ | async)"
-      (change)="changePaintColor($event)">
 
