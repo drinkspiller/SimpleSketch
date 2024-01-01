@@ -1,6 +1,7 @@
-import {Injectable} from '@angular/core';
+import {Injectable, inject} from '@angular/core';
 import {ComponentStore} from '@ngrx/component-store';
 import {BehaviorSubject, Observable, combineLatest, tap} from 'rxjs';
+import {WINDOW} from './injection-tokens';
 
 export interface SimpleSketchState {
   backgroundColor: string;
@@ -30,6 +31,7 @@ export const INITIAL_STATE: SimpleSketchState = {
 export class SimpleSketchStore extends ComponentStore<SimpleSketchState> {
   private canvas = new BehaviorSubject<HTMLCanvasElement | null>(null);
   private context = new BehaviorSubject<CanvasRenderingContext2D | null>(null);
+  private window = inject(WINDOW);
 
   /**
    * +-------------------------------------------+
