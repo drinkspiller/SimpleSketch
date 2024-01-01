@@ -30,7 +30,7 @@ import {SimpleSketchToolbarComponent} from './simple-sketch-toolbar.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SimpleSketchCanvasComponent implements AfterViewInit {
-  @Input({required: false}) toolbar = true;
+  @Input({required: false}) showToolbar = true;
   @Input({required: false}) backgroundColor = '#ffffff';
   @Input({required: false}) paintColor = '#000000';
 
