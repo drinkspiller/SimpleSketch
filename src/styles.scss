@@ -48,3 +48,13 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+.cdk-overlay-container,
+.cdk-overlay-backdrop {
+  pointer-events: all;
+}
+
+
+.simple-sketch-mousetrap-overlay {
+  z-index: 2000;
+}

@@ -43,13 +43,12 @@ export class SimpleSketchColorPickerComponent {
 
   @Output()
   public colorChange: EventEmitter<string> = new EventEmitter();
+
   @Output()
   public pickerVisibleChange: EventEmitter<boolean> = new EventEmitter();
 
   @HostListener('click', ['$event'])
   toggleColorPicker(event: Event) {
-    event.stopPropagation();
-
     this.isVisible$.pipe(take(1)).subscribe(isVisible => {
       if (!isVisible) {
         this.simpleSketchColorPickerStore.showOverlay();
