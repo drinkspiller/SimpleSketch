@@ -10,10 +10,21 @@
   color: theme.$neutral-10;
 }
 
-.mat-button-toggle-button .mat-button-toggle-label-content {
-  border: 1px solid red !important;
+.swatch {
+  bottom: 0;
+  border-radius: 5px;
+  display: block;
+  height: 9px;
+  transform: translate(-9px, -10px);
+  right: 0;
+  width: 9px;
 }
 
-swatches-picker {
+mat-toolbar {
   position: relative;
+}
+
+// Elevates z-index of nested buttons
+.z-index-elevated {
+  z-index: 1500;
 }

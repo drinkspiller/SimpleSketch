@@ -1,14 +1,24 @@
 <mat-toolbar color="primary">
-  <button mat-icon-button aria-label="Background color">
-    <simple-sketch-color-picker (colorChange)="changeBackgroundColor($event)">
+  <button mat-icon-button aria-label="Background color" class="z-index-elevated">
+    <simple-sketch-color-picker
+      (colorChange)="changeBackgroundColor($event)"
+      (click)="paintColorPicker.close()"
+      #backgroundColorPicker
+    >
     </simple-sketch-color-picker>
     <span class="material-symbols-outlined">texture</span>
+        <span class="swatch" [style.backgroundColor]="(backgroundColor$ | async)"></span>
   </button>
 
-  <button mat-icon-button aria-label="Paint color">
-    <simple-sketch-color-picker (colorChange)="changePaintColor($event)">
+  <button mat-icon-button aria-label="Paint color" class="z-index-elevated">
+    <simple-sketch-color-picker
+        (colorChange)="changePaintColor($event)"
+        (click)="backgroundColorPicker.close()"
+        #paintColorPicker
+      >
     </simple-sketch-color-picker>
     <span class="material-symbols-outlined">palette</span>
+    <span class="swatch" [style.backgroundColor]="(paintColor$ | async)"></span>
   </button>
   <button mat-icon-button aria-label="Clear Canvas">
     <span class="material-symbols-outlined">restart_alt</span>
@@ -24,18 +34,4 @@
       <span class="material-symbols-outlined">ink_eraser</span>
     </mat-button-toggle>
   </mat-button-toggle-group>
-
 </mat-toolbar>
-
-<!-- <mat-label>Background color</mat-label>
-  <input matNativeControl
-      type="color"
-      [ngModel]="backgroundColor$ | async"
-      (input)[color]=""($event)">
-<br>
-<mat-label>Paint color</mat-label>
-  <input matNativeControl
-      type="color"
-      [ngModel]="(paintColor$ | async)"
-      [value]="(paintColor$ | async)"
-      (input)="changePaintColor($event)"> -->

@@ -13,14 +13,3 @@ github-picker {
   top: 100%;
   z-index: 150;
 }
-
-.overlay {
-  display: block;
-  height: 100vh;
-  left: 0;
-  overflow: hidden;
-  position: fixed;
-  top: 0;
-  width: 100vw;
-  z-index: 15;
-}

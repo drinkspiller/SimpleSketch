@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import {SimpleSketchColorPickerStore} from './simple-sketch-color-picker.store';
 import {ColorPickerControl, ColorPickerModule} from '@iplab/ngx-color-picker';
-import {take, takeUntil} from 'rxjs';
+import {take} from 'rxjs';
 import {CommonModule} from '@angular/common';
 
 export const DEFAULT_SWATCHES = [
@@ -43,12 +43,19 @@ export class SimpleSketchColorPickerComponent {
 
   @Output()
   public colorChange: EventEmitter<string> = new EventEmitter();
+  @Output()
+  public pickerVisibleChange: EventEmitter<boolean> = new EventEmitter();
 
   @HostListener('click', ['$event'])
   toggleColorPicker(event: Event) {
     event.stopPropagation();
 
     this.isVisible$.pipe(take(1)).subscribe(isVisible => {
+      if (!isVisible) {
+        this.simpleSketchColorPickerStore.showOverlay();
+      } else {
+        this.simpleSketchColorPickerStore.hideOverlay();
+      }
       this.simpleSketchColorPickerStore.updateIsVisible(!isVisible);
     });
   }
@@ -62,11 +69,16 @@ export class SimpleSketchColorPickerComponent {
 
   changeColor(): void {
     this.colorChange.emit(this.color);
+    this.close();
+  }
+
+  close() {
+    this.simpleSketchColorPickerStore.hideOverlay();
     this.simpleSketchColorPickerStore.updateIsVisible(false);
   }
 
   discardClick(event: MouseEvent | TouchEvent): void {
     event.stopPropagation();
-    this.simpleSketchColorPickerStore.updateIsVisible(false);
+    this.close();
   }
 }
