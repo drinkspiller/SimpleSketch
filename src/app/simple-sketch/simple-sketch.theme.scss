@@ -1,0 +1,230 @@
+@use '@angular/material' as mat;
+
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+$color-black: #000;
+$color-white: #fff;
+
+// Primary
+$primary-0: #000;
+$primary-5: #000f31;
+$primary-10: #001946;
+$primary-20: #002c70;
+$primary-25: #003687;
+$primary-30: #00419e;
+$primary-35: #004cb6;
+$primary-40: #0057ce;
+$primary-50: #076eff;
+$primary-60: #588cff;
+$primary-70: #87a9ff;
+$primary-80: #b1c5ff;
+$primary-90: #dae2ff;
+$primary-95: #eef0ff;
+$primary-98: #faf8ff;
+$primary-99: #fefbff;
+$primary-100: #fff;
+
+// Secondary
+$secondary-0: #000;
+$secondary-5: #001224;
+$secondary-10: #001d35;
+$secondary-20: #003257;
+$secondary-25: #003e68;
+$secondary-30: #00497b;
+$secondary-35: #00558e;
+$secondary-40: #0062a1;
+$secondary-50: #007bc9;
+$secondary-60: #3295e8;
+$secondary-70: #5eb0ff;
+$secondary-80: #9cccff;
+$secondary-90: #d0e4ff;
+$secondary-95: #e9f1ff;
+$secondary-98: #f8f9ff;
+$secondary-99: #fdfcff;
+$secondary-100: #fff;
+
+$primary-palette: (
+  10: $primary-90,
+  50: $primary-80,
+  100: $primary-70,
+  200: $primary-60,
+  300: $primary-70,
+  400: $primary-40,
+  500: $primary-30,
+  600: $primary-20,
+  700: $primary-10,
+  800: $primary-5,
+  900: $primary-5,
+  contrast: (50: $color-black,
+    100: $color-black,
+    200: $color-black,
+    300: $color-black,
+    400: $color-black,
+    500: $color-white,
+    600: $color-white,
+    700: $color-white,
+    800: $color-white,
+    900: $color-white,
+  ),
+);
+
+// Tertiary
+$tertiary-0: #000;
+$tertiary-5: #1c0e00;
+$tertiary-10: #2a1700;
+$tertiary-20: #462a00;
+$tertiary-25: #553400;
+$tertiary-30: #653e00;
+$tertiary-35: #744900;
+$tertiary-40: #845400;
+$tertiary-50: #a66a00;
+$tertiary-60: #c5831b;
+$tertiary-70: #e49d36;
+$tertiary-80: #ffb95c;
+$tertiary-90: #ffddb7;
+$tertiary-95: #ffeede;
+$tertiary-98: #fff8f4;
+$tertiary-99: #fffbff;
+$tertiary-100: #fff;
+
+// Error
+$error-0: #000;
+$error-5: #2d0001;
+$error-10: #410002;
+$error-20: #690005;
+$error-25: #7e0007;
+$error-30: #93000a;
+$error-35: #a80710;
+$error-40: #ba1a1a;
+$error-50: #de3730;
+$error-60: #ff5449;
+$error-70: #ff897d;
+$error-80: #ffb4ab;
+$error-90: #ffdad6;
+$error-95: #ffedea;
+$error-98: #fff8f7;
+$error-99: #fffbff;
+$error-100: #fff;
+
+// Neutral
+$neutral-0: #000;
+$neutral-5: #0f1113;
+$neutral-10: #1a1c1e;
+$neutral-20: #2f3133;
+$neutral-25: #3a3b3e;
+$neutral-30: #45474a;
+$neutral-35: #515255;
+$neutral-40: #5d5e61;
+$neutral-50: #76777a;
+$neutral-60: #8f9194;
+$neutral-70: #aaabae;
+$neutral-80: #c6c6c9;
+$neutral-90: #e2e2e5;
+$neutral-95: #f0f0f4;
+$neutral-98: #f9f9fc;
+$neutral-99: #fcfcff;
+$neutral-100: #fff;
+
+// Neutral Variant
+$neutral-variant-0: #000;
+$neutral-variant-5: #0e1117;
+$neutral-variant-10: #181c22;
+$neutral-variant-20: #2d3038;
+$neutral-variant-25: #383b43;
+$neutral-variant-30: #44474e;
+$neutral-variant-35: #4f525a;
+$neutral-variant-40: #5b5e66;
+$neutral-variant-50: #74777f;
+$neutral-variant-60: #8e9099;
+$neutral-variant-70: #a8abb4;
+$neutral-variant-80: #c4c6cf;
+$neutral-variant-90: #e0e2ec;
+$neutral-variant-95: #eef0fa;
+$neutral-variant-98: #f9f9ff;
+$neutral-variant-99: #fdfbff;
+$neutral-variant-100: #fff;
+
+// Accent
+$accent-palette: (
+  10: $secondary-5,
+  50: $secondary-5,
+  100: $secondary-10,
+  200: $secondary-20,
+  300: $secondary-30,
+  400: $secondary-40,
+  500: $secondary-50,
+  600: $secondary-60,
+  700: $secondary-70,
+  800: $secondary-80,
+  900: $secondary-90,
+  contrast: (50: $color-black,
+    100: $color-black,
+    200: $color-black,
+    300: $color-black,
+    400: $color-black,
+    500: $color-black,
+    600: $color-black,
+    700: $color-black,
+    800: $color-black,
+    900: $color-black,
+  ),
+);
+
+// Neutral
+$neutral-palette: (
+  10: $neutral-5,
+  50: $neutral-5,
+  100: $neutral-10,
+  200: $neutral-20,
+  300: $neutral-30,
+  400: $neutral-40,
+  500: $neutral-50,
+  600: $neutral-60,
+  700: $neutral-70,
+  800: $neutral-80,
+  900: $neutral-90,
+  contrast: (50: $color-black,
+    100: $color-black,
+    200: $color-black,
+    300: $color-black,
+    400: $color-black,
+    500: $color-black,
+    600: $color-black,
+    700: $color-black,
+    800: $color-black,
+    900: $color-black,
+  ),
+);
+
+$mat-theme-primary: mat.define-palette($primary-palette);
+$mat-dark-theme-primary: mat.define-palette($primary-palette);
+$mat-theme-accent: mat.define-palette($accent-palette);
+$mat-dark-theme-accent: mat.define-palette($primary-palette);
+
+
+$mat-density: 0;
+// @include mat.elevation($zValue: 12,
+//   $color: #000,
+//   $opacity: 0.5);
+
+$mat-core-theme: mat.define-light-theme((color: (primary: $mat-theme-primary,
+        accent: $mat-theme-accent,
+      ),
+      typography: mat.define-typography-config(),
+      density: $mat-density));
+
+$mat-dark-theme: mat.define-dark-theme((color: (primary: $mat-dark-theme-primary,
+        accent: $mat-dark-theme-accent,
+      )));
+
+@include mat.all-component-themes($mat-core-theme);
+
+.dark-theme {
+  @include mat.all-component-colors($mat-dark-theme);
+}
+
+// Angular material CSS variable value overrides.
+:root {
+  --mat-standard-button-toggle-height: 40px;
+}
