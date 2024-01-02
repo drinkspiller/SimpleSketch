@@ -8,7 +8,7 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import {SimpleSketchStore} from '../store/simple-sketch.store';
+import {SimpleSketchCanvasStore} from './simple-sketch-canvas.store';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
@@ -24,7 +24,7 @@ import {SimpleSketchToolbarComponent} from '../toolbar/simple-sketch-toolbar.com
     MatInputModule,
     SimpleSketchToolbarComponent,
   ],
-  providers: [SimpleSketchStore],
+  providers: [SimpleSketchCanvasStore],
   templateUrl: './simple-sketch-canvas.component.html',
   styleUrl: './simple-sketch-canvas.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,19 +36,21 @@ export class SimpleSketchCanvasComponent implements AfterViewInit {
 
   @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement> | null = null;
 
-  private readonly simpleSketchStore: SimpleSketchStore =
-    inject(SimpleSketchStore);
+  private readonly simpleSketchCanvasStore: SimpleSketchCanvasStore = inject(
+    SimpleSketchCanvasStore
+  );
   protected readonly backgroundColor$ =
-    this.simpleSketchStore.backgroundColor$.pipe(
+    this.simpleSketchCanvasStore.backgroundColor$.pipe(
       shareReplay({bufferSize: 1, refCount: true})
     );
-  protected readonly paintColor$ = this.simpleSketchStore.paintColor$.pipe(
-    shareReplay({bufferSize: 1, refCount: true})
-  );
+  protected readonly paintColor$ =
+    this.simpleSketchCanvasStore.paintColor$.pipe(
+      shareReplay({bufferSize: 1, refCount: true})
+    );
 
   ngAfterViewInit(): void {
     if (this.canvas === null) return;
-    this.simpleSketchStore.init([
+    this.simpleSketchCanvasStore.init([
       this.canvas.nativeElement,
       this.backgroundColor,
       this.paintColor,
@@ -56,26 +58,26 @@ export class SimpleSketchCanvasComponent implements AfterViewInit {
   }
 
   changeBackgroundColor(event: Event) {
-    this.simpleSketchStore.updateBackGroundColor(
+    this.simpleSketchCanvasStore.updateBackGroundColor(
       (event.target as HTMLInputElement).value
     );
   }
 
   changePaintColor(event: Event) {
-    this.simpleSketchStore.updatePaintColor(
+    this.simpleSketchCanvasStore.updatePaintColor(
       (event.target as HTMLInputElement).value
     );
   }
 
   sketch(event: MouseEvent | TouchEvent) {
-    this.simpleSketchStore.sketch(event);
+    this.simpleSketchCanvasStore.sketch(event);
   }
 
   startSketch(event: MouseEvent | TouchEvent) {
-    this.simpleSketchStore.startSketch(event);
+    this.simpleSketchCanvasStore.startSketch(event);
   }
 
   stopSketch(event: MouseEvent | TouchEvent) {
-    this.simpleSketchStore.stopSketch(event);
+    this.simpleSketchCanvasStore.stopSketch(event);
   }
 }

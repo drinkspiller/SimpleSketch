@@ -1,12 +1,13 @@
 <mat-toolbar color="primary">
   <button mat-icon-button aria-label="Background color">
+    <simple-sketch-color-picker (colorChange)="changeBackgroundColor($event)">
+    </simple-sketch-color-picker>
     <span class="material-symbols-outlined">texture</span>
-    <github-picker [control]="backgroundColor" (colorChange)="changeBackgroundColor($event)"></github-picker>
   </button>
 
   <button mat-icon-button aria-label="Paint color">
     <span class="material-symbols-outlined">palette</span>
-    <github-picker [control]="paintColor" (colorChange)="changeBackgroundColor($event)"></github-picker>
+
   </button>
   <button mat-icon-button aria-label="Clear Canvas">
     <span class="material-symbols-outlined">restart_alt</span>
