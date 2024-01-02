@@ -1,4 +1,7 @@
+// Plus imports for other components in your app.
 @use '../node_modules/normalize.css/normalize';
+@use 'app/simple-sketch/simple-sketch.theme.scss';
+
 
 /* apply a natural box layout model to all elements, but allowing components to change */
 html {
@@ -21,4 +24,27 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
   margin: 0;
   overflow: hidden;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+}
+
+
+.flex {
+  flex: 1;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }

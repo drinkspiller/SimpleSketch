@@ -1,0 +1,16 @@
+@use 'simple-sketch.theme' as theme;
+
+.mat-button-toggle-appearance-standard.mat-button-toggle {
+  background: theme.$neutral-80;
+  color: theme.$neutral-60;
+}
+
+.mat-button-toggle-appearance-standard.mat-button-toggle-checked {
+  background: theme.$neutral-99;
+  color: theme.$neutral-10;
+}
+
+.mat-button-toggle-button .mat-button-toggle-label-content {
+  border: 1px solid red !important;
+  // line-height: var(--mat-standard-button-toggle-height);
+}

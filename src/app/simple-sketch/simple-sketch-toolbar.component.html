@@ -1,13 +1,37 @@
-<p>simple-sketch-toolbar.component works!</p>
-<mat-label>Background color</mat-label>
+<mat-toolbar color="primary">
+
+  <button mat-icon-button aria-label="Background color">
+    <span class="material-symbols-outlined">texture</span>
+  </button>
+  <button mat-icon-button aria-label="Paint color">
+    <span class="material-symbols-outlined">palette</span>
+  </button>
+  <button mat-icon-button aria-label="Clear Canvas">
+    <span class="material-symbols-outlined">restart_alt</span>
+  </button>
+
+  <span class="flex"></span>
+
+  <mat-button-toggle-group aria-label="Mode" name="mode">
+    <mat-button-toggle value="sketch" aria-label="Sketch" checked>
+        <span class="material-symbols-outlined">brush</span>
+    </mat-button-toggle>
+    <mat-button-toggle value="erase" aria-label="Erase">
+      <span class="material-symbols-outlined">ink_eraser</span>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+
+</mat-toolbar>
+
+<!-- <mat-label>Background color</mat-label>
   <input matNativeControl
       type="color"
       [ngModel]="backgroundColor$ | async"
-      (input)="changeBackgroundColor($event)">
+      (input)[color]=""($event)">
 <br>
 <mat-label>Paint color</mat-label>
   <input matNativeControl
       type="color"
       [ngModel]="(paintColor$ | async)"
       [value]="(paintColor$ | async)"
-      (input)="changePaintColor($event)">
+      (input)="changePaintColor($event)"> -->

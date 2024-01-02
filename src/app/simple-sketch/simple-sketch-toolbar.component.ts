@@ -1,13 +1,25 @@
+import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
+import {MatButtonModule} from '@angular/material/button';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
+import {MatToolbarModule} from '@angular/material/toolbar';
 import {SimpleSketchStore} from './simple-sketch.store';
-import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'simple-sketch-toolbar',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatInputModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatIconModule,
+    MatInputModule,
+    MatToolbarModule,
+  ],
   templateUrl: './simple-sketch-toolbar.component.html',
   styleUrl: './simple-sketch-toolbar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
