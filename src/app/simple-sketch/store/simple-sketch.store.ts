@@ -13,7 +13,7 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import {WINDOW} from './injection-tokens';
+import {WINDOW} from '../injection-tokens';
 
 export interface SimpleSketchState {
   backgroundColor: string;

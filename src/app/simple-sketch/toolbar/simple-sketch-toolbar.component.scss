@@ -1,4 +1,4 @@
-@use 'simple-sketch.theme' as theme;
+@use '../simple-sketch.theme' as theme;
 
 .mat-button-toggle-appearance-standard.mat-button-toggle {
   background: theme.$neutral-80;
@@ -12,5 +12,8 @@
 
 .mat-button-toggle-button .mat-button-toggle-label-content {
   border: 1px solid red !important;
-  // line-height: var(--mat-standard-button-toggle-height);
+}
+
+swatches-picker {
+  position: relative;
 }

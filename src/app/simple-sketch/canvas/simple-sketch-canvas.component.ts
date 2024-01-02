@@ -8,12 +8,12 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import {SimpleSketchStore} from './simple-sketch.store';
+import {SimpleSketchStore} from '../store/simple-sketch.store';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {shareReplay} from 'rxjs/operators';
-import {SimpleSketchToolbarComponent} from './simple-sketch-toolbar.component';
+import {SimpleSketchToolbarComponent} from '../toolbar/simple-sketch-toolbar.component';
 
 @Component({
   selector: 'simple-sketch-canvas',
