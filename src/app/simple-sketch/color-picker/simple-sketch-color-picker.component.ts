@@ -60,8 +60,7 @@ export class SimpleSketchColorPickerComponent {
   protected simpleSketchColorPickerStore = inject(SimpleSketchColorPickerStore);
   protected isVisible$ = this.simpleSketchColorPickerStore.isVisible$;
 
-  changeColor(event: string): void {
-    // event.stopPropagation();
+  changeColor(): void {
     this.colorChange.emit(this.color);
     this.simpleSketchColorPickerStore.updateIsVisible(false);
   }

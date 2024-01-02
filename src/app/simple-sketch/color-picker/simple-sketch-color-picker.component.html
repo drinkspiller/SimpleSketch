@@ -1,6 +1,6 @@
 @if (isVisible$ | async) {
   <div class="picker">
-    <github-picker [control]="colorControl" (colorChange)="changeColor($event)">
+    <github-picker [control]="colorControl" (colorChange)="changeColor()">
     </github-picker>
     <div class="overlay" (click)="discardClick($event)"></div>
   </div>

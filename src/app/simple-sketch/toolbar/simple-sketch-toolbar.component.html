@@ -6,8 +6,9 @@
   </button>
 
   <button mat-icon-button aria-label="Paint color">
+    <simple-sketch-color-picker (colorChange)="changePaintColor($event)">
+    </simple-sketch-color-picker>
     <span class="material-symbols-outlined">palette</span>
-
   </button>
   <button mat-icon-button aria-label="Clear Canvas">
     <span class="material-symbols-outlined">restart_alt</span>
