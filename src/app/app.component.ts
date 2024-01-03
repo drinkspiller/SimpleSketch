@@ -1,6 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {Component} from '@angular/core';
-import {SimpleSketchCanvasComponent} from './simple-sketch/canvas/simple-sketch-canvas.component';
+import {SimpleSketchCanvasComponent} from './simple-sketch/canvas/canvas.component';
 
 @Component({
   selector: 'app-root',
