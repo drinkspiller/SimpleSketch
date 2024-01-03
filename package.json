@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "lt": "npx concurrently \"ng serve\" \"lt --port 4200 --subdomain gempaint\"",
-    "build": "npm run compile",
+    "build": "rm -rf ./dist && npm run compile",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "gts lint",
