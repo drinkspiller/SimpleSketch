@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ngSimpleSketch": {
+    "ngSimpleSketchDemo": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -85,10 +85,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "ngSimpleSketch:build:production"
+              "buildTarget": "ngSimpleSketchDemo:build:production"
             },
             "development": {
-              "buildTarget": "ngSimpleSketch:build:development"
+              "buildTarget": "ngSimpleSketchDemo:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -96,7 +96,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "ngSimpleSketch:build"
+            "buildTarget": "ngSimpleSketchDemo:build"
           }
         },
         "test": {
@@ -117,6 +117,39 @@
               "src/styles.scss"
             ],
             "scripts": []
+          }
+        }
+      }
+    },
+    "ngSimpleSketch": {
+      "projectType": "library",
+      "root": "simple-sketch",
+      "sourceRoot": "src/simple-sketch",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "src/simple-sketch/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "src/simple-sketch/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "src/simple-sketch/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "src/simple-sketch/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
           }
         }
       }

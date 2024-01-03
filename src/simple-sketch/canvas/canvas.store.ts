@@ -31,7 +31,7 @@ export interface SimpleSketchCanvasState {
   startY: number;
 }
 
-export const INITIAL_STATE: SimpleSketchCanvasState = {
+const INITIAL_STATE: SimpleSketchCanvasState = {
   backgroundColor: '#000000',
   canvasOffsetX: 0,
   canvasOffsetY: 0,
@@ -238,7 +238,9 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
     (event$: Observable<MouseEvent | TouchEvent>) => {
       return event$.pipe(
         tap(event => {
-          const screenPosition = this.eventPosition(event);
+          const screenPosition = this.eventPosition(
+            event as unknown as MouseEvent | TouchEvent
+          );
 
           this.updateIsSketching(true);
           this.updateStartX(screenPosition.x);

@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "lt": "npx concurrently \"ng serve\" \"lt --port 4200 --subdomain gempaint\"",
-    "build": "rm -rf ./dist && npm run compile",
+    "lt": "npx concurrently \"ng serve\" \"lt --port 4200\"",
+    "build": "rm -rf ./dist && npm run ngpackagr",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "gts lint",
@@ -14,7 +14,8 @@
     "fix": "gts fix",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
-    "posttest": "npm run lint"
+    "posttest": "npm run lint",
+    "ngpackagr": "npx ng-packagr -p src/simple-sketch/ng-package.json"
   },
   "private": true,
   "dependencies": {
@@ -52,6 +53,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "localtunnel": "^2.0.2",
+    "ng-packagr": "^17.0.3",
     "typescript": "~5.2.2"
   }
 }

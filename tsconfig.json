@@ -4,7 +4,7 @@
   "compilerOptions": {
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-    "outDir": "./dist",
+    "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitOverride": true,
@@ -27,6 +27,11 @@
       "ES2022",
       "dom"
     ],
+    "paths": {
+      "ng-simple-sketch": [
+        "./dist/ng-simple-sketch"
+      ]
+    },
   },
   "exclude": [
     "node_modules",

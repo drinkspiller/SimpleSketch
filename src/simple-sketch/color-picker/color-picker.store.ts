@@ -19,7 +19,7 @@ export interface SimpleSketchColorPickerState {
   isVisible: boolean;
 }
 
-export const INITIAL_STATE: SimpleSketchColorPickerState = {
+const INITIAL_STATE: SimpleSketchColorPickerState = {
   clickStream: 0,
   isVisible: false,
 };
