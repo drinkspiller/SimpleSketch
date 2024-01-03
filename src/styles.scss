@@ -1,6 +1,6 @@
 // Plus imports for other components in your app.
 @use '../node_modules/normalize.css/normalize';
-@use 'app/simple-sketch/simple-sketch.theme.scss';
+@use './simple-sketch/simple-sketch.theme.scss';
 
 
 /* apply a natural box layout model to all elements, but allowing components to change */
