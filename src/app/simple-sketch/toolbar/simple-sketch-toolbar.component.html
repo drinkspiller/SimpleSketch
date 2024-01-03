@@ -3,19 +3,20 @@
     <simple-sketch-color-picker
       (colorChange)="changeBackgroundColor($event)"
       (click)="paintColorPicker.close()"
-      #backgroundColorPicker
-    >
+      #backgroundColorPicker>
     </simple-sketch-color-picker>
     <span class="material-symbols-outlined">texture</span>
-        <span class="swatch" [style.backgroundColor]="(backgroundColor$ | async)"></span>
+    <span class="swatch" [style.backgroundColor]="(backgroundColor$ | async)"></span>
   </button>
 
-  <button mat-icon-button aria-label="Paint color" class="z-index-elevated">
+  <button mat-icon-button
+      aria-label="Paint color"
+      class="z-index-elevated"
+      [disabled]="(mode$ | async) === Mode.ERASE">
     <simple-sketch-color-picker
         (colorChange)="changePaintColor($event)"
         (click)="backgroundColorPicker.close()"
-        #paintColorPicker
-      >
+        #paintColorPicker>
     </simple-sketch-color-picker>
     <span class="material-symbols-outlined">palette</span>
     <span class="swatch" [style.backgroundColor]="(paintColor$ | async)"></span>

@@ -29,3 +29,12 @@ mat-toolbar {
 .z-index-elevated {
   z-index: 1500;
 }
+
+.mat-mdc-icon-button[disabled] {
+  color: rgba(255, 255, 255, .55);
+
+  .swatch {
+    opacity: .55;
+    ;
+  }
+}

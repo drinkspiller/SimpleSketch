@@ -220,7 +220,8 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
             if (!isSketching || context === null) return;
             context.globalCompositeOperation =
               mode === Mode.SKETCH ? 'source-over' : 'destination-out';
-            context.lineWidth = lineWidth;
+            context.lineWidth =
+              mode === Mode.SKETCH ? lineWidth : lineWidth * 1.7;
             context.lineCap = 'round';
             context.strokeStyle = paintColor;
 
@@ -281,7 +282,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
         ),
         tap(([canvas, context, width, height]) => {
           // Resizing the canvas will clear its contents, so store the current
-          // canvas contents before resizing.
+          // canvas contents before resizing so they can be restored after.
           const currentCanvasContent = context!.getImageData(
             0,
             0,
