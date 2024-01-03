@@ -29,7 +29,8 @@
     ],
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "./dist/**/*"
   ],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
