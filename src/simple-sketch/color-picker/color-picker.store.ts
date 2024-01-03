@@ -2,16 +2,7 @@ import {Overlay, OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {Injectable, inject} from '@angular/core';
 import {ComponentStore} from '@ngrx/component-store';
-import {
-  Observable,
-  combineLatest,
-  merge,
-  of,
-  startWith,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs';
+import {Observable, combineLatest, tap} from 'rxjs';
 import {ColorPickerMousetrapOverlayComponent} from './color-picker-mousetrap-overlay.component';
 
 export interface SimpleSketchColorPickerState {

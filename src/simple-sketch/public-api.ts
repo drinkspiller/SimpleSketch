@@ -1,5 +1,5 @@
 /*
- * Public API Surface of ng-simple-sketch
+ * Public API Surface of simple-sketch
  */
 
 export * from './canvas/canvas.component';

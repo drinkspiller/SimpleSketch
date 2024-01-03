@@ -276,6 +276,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
           ]);
         }),
         filter(
+          /* eslint-disable @typescript-eslint/no-unused-vars */
           ([canvas, context, width, height]) =>
             canvas !== null && context !== null
         ),
