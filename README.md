@@ -34,12 +34,7 @@ export class MyComponent {}
 ## Run the Demo App
 Run `ng serve`, then navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
 ## Build
-
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
 <!-- ## Running unit tests
