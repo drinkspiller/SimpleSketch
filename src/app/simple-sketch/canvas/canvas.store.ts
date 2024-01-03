@@ -13,7 +13,6 @@ import {
   tap,
 } from 'rxjs';
 import {WINDOW} from '../injection-tokens';
-import {SimpleSketchCanvasComponent} from './canvas.component';
 
 export enum Mode {
   ERASE = 'erase',
@@ -44,9 +43,7 @@ export const INITIAL_STATE: SimpleSketchCanvasState = {
   startY: 0,
 };
 
-@Injectable({
-  providedIn: SimpleSketchCanvasComponent,
-})
+@Injectable()
 export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasState> {
   private canvas$ = new BehaviorSubject<HTMLCanvasElement | null>(null);
   private context$ = new BehaviorSubject<CanvasRenderingContext2D | null>(null);
