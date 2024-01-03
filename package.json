@@ -24,7 +24,7 @@
     "posttest": "npm run lint",
     "prebuild": "npm run fix && npm run build:sass",
     "publish": "npm run build && npm publish ./dist/simple-sketch --verbose",
-    "bump": "(cd ./dist/simple-sketch && npm version patch)"
+    "bump": "(cd ./src/simple-sketch && npm version patch)"
   },
   "private": true,
   "dependencies": {
