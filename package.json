@@ -18,7 +18,7 @@
     "pretest": "npm run compile",
     "posttest": "npm run lint",
     "prebuild": "npm run fix && npm run build:sass",
-    "publish": "npm run build && npm publish dist"
+    "publish": "npm run build && npm publish ./dist/simple-sketch"
   },
   "private": true,
   "dependencies": {
