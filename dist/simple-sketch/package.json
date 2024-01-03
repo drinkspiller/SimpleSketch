@@ -1,6 +1,10 @@
 {
   "name": "simple-sketch",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/drinkspiller/SimpleSketch.git"
+  },
   "peerDependencies": {
     "@angular/animations": "^17.0.0",
     "@angular/cdk": "~17.0.4",

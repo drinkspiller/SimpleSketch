@@ -11,11 +11,8 @@ A standalone Angular component for simple canvas sketching using the [Angular Ma
 ```sh
 npm install simple-sketch
 ```
-2. Import into your component's .ts file:
+2. Import into your component's .ts file (e.g. `my-component.ts`)
 ```typescript
-/* ----------------------------------------------------------
- * my-component.ts
- * ----------------------------------------------------------*/
 import {Component} from '@angular/core';
 import {SimpleSketchCanvasComponent} from 'simple-sketch';
 
@@ -25,18 +22,8 @@ import {SimpleSketchCanvasComponent} from 'simple-sketch';
 })
 export class MyComponent {}
 ```
-3. Import SimpleSketch's styles into your global stylesheet: (e.g. `styles.scss`)
-```scss
-/* ----------------------------------------------------------
- * styles.scss
- * ----------------------------------------------------------*/
- @import '../node_modules/simple-sketch/assets/styles.css';
-```
-4. Use the simple sketch component in your component's template:
+3. Use the simple sketch component in your component's template (e.g. `my-component.html`):
 ```html
- <!----------------------------------------------------------
- * my-component.html
- * ---------------------------------------------------------->
 <simple-sketch-canvas
     backgroundColor="#000000"
     paintColor="#ffffff"
