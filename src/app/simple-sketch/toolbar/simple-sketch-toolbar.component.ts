@@ -5,7 +5,10 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
 import {MatToolbarModule} from '@angular/material/toolbar';
-import {SimpleSketchCanvasStore} from '../canvas/simple-sketch-canvas.store';
+import {
+  Mode,
+  SimpleSketchCanvasStore,
+} from '../canvas/simple-sketch-canvas.store';
 import {SimpleSketchColorPickerComponent} from '../color-picker/simple-sketch-color-picker.component';
 import {CommonModule} from '@angular/common';
 
@@ -30,13 +33,18 @@ export class SimpleSketchToolbarComponent {
   private readonly simpleSketchCanvasStore: SimpleSketchCanvasStore = inject(
     SimpleSketchCanvasStore
   );
-
   protected readonly backgroundColor$ =
     this.simpleSketchCanvasStore.backgroundColor$;
   protected readonly paintColor$ = this.simpleSketchCanvasStore.paintColor$;
+  protected readonly mode$ = this.simpleSketchCanvasStore.mode$;
+  readonly Mode = Mode;
 
   changeBackgroundColor(newColor: string) {
     this.simpleSketchCanvasStore.updateBackGroundColor(newColor);
+  }
+
+  changeMode(newMode: Mode) {
+    this.simpleSketchCanvasStore.updateMode(newMode);
   }
 
   changePaintColor(newColor: string) {

@@ -27,11 +27,15 @@
 
   <span class="flex"></span>
 
-  <mat-button-toggle-group aria-label="Mode" name="mode">
-    <mat-button-toggle value="sketch" aria-label="Sketch" checked>
+  <mat-button-toggle-group
+      aria-label="Mode"
+      name="mode"
+      [ngModel]="mode$ | async"
+      (ngModelChange)="changeMode($event)">
+    <mat-button-toggle [value]="Mode.SKETCH" aria-label="Sketch" checked>
         <span class="material-symbols-outlined">brush</span>
     </mat-button-toggle>
-    <mat-button-toggle value="erase" aria-label="Erase">
+    <mat-button-toggle [value]="Mode.ERASE" aria-label="Erase">
       <span class="material-symbols-outlined">ink_eraser</span>
     </mat-button-toggle>
   </mat-button-toggle-group>

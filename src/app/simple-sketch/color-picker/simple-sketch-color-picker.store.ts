@@ -77,8 +77,8 @@ export class SimpleSketchColorPickerStore extends ComponentStore<SimpleSketchCol
       this.mouseTrapOverlay.backdropClick(),
     ]).pipe(
       tap(() => {
-        console.log('hidden by bg click!');
         this.hideOverlay();
+        this.updateIsVisible(false);
       })
     );
   });
@@ -86,7 +86,6 @@ export class SimpleSketchColorPickerStore extends ComponentStore<SimpleSketchCol
   readonly showOverlay = this.effect(trigger$ => {
     return trigger$.pipe(
       tap(() => {
-        console.log('showOverlay');
         this.mouseTrapOverlay.detach();
         this.mouseTrapOverlay.attach(this.mousetrapOverlayComponentPortal);
 

@@ -15,12 +15,18 @@ import {
 import {WINDOW} from '../injection-tokens';
 import {SimpleSketchCanvasComponent} from './simple-sketch-canvas.component';
 
+export enum Mode {
+  ERASE = 'erase',
+  SKETCH = 'sketch',
+}
+
 export interface SimpleSketchCanvasState {
   backgroundColor: string;
   canvasOffsetX: number;
   canvasOffsetY: number;
   isSketching: boolean;
   lineWidth: number;
+  mode: Mode;
   paintColor: string;
   startX: number;
   startY: number;
@@ -30,9 +36,10 @@ export const INITIAL_STATE: SimpleSketchCanvasState = {
   backgroundColor: '#000000',
   canvasOffsetX: 0,
   canvasOffsetY: 0,
-  paintColor: '#ffffff',
   isSketching: false,
   lineWidth: 5,
+  mode: Mode.SKETCH,
+  paintColor: '#ffffff',
   startX: 0,
   startY: 0,
 };
@@ -74,6 +81,8 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
     state => state.lineWidth
   );
 
+  readonly mode$: Observable<Mode> = this.select(state => state.mode);
+
   /**
    * +-------------------------------------------+
    * UPDATERS
@@ -108,6 +117,11 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
   readonly updatePaintColor = this.updater((state, newPaintColor: string) => ({
     ...state,
     paintColor: newPaintColor,
+  }));
+
+  readonly updateMode = this.updater((state, newMode: Mode) => ({
+    ...state,
+    mode: newMode,
   }));
 
   readonly updateStartX = this.updater((state, newStartX: number) => ({
@@ -190,6 +204,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
         this.canvasOffsetX$,
         this.canvasOffsetY$,
         this.paintColor$,
+        this.mode$,
       ]).pipe(
         tap(
           ([
@@ -200,9 +215,11 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
             canvasOffsetX,
             canvasOffsetY,
             paintColor,
+            mode,
           ]) => {
             if (!isSketching || context === null) return;
-
+            context.globalCompositeOperation =
+              mode === Mode.SKETCH ? 'source-over' : 'destination-out';
             context.lineWidth = lineWidth;
             context.lineCap = 'round';
             context.strokeStyle = paintColor;
