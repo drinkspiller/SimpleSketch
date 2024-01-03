@@ -1,0 +1,40 @@
+@use '../simple-sketch.theme' as theme;
+
+.mat-button-toggle-appearance-standard.mat-button-toggle {
+  background: theme.$neutral-80;
+  color: theme.$neutral-60;
+}
+
+.mat-button-toggle-appearance-standard.mat-button-toggle-checked {
+  background: theme.$neutral-99;
+  color: theme.$neutral-10;
+}
+
+.swatch {
+  bottom: 0;
+  outline: 1px solid #7e7e7e;
+  border-radius: 5px;
+  display: block;
+  height: 9px;
+  transform: translate(-9px, -10px);
+  right: 0;
+  width: 9px;
+}
+
+mat-toolbar {
+  position: relative;
+}
+
+// Elevates z-index of nested buttons
+.z-index-elevated {
+  z-index: 1500;
+}
+
+.mat-mdc-icon-button[disabled] {
+  color: rgba(255, 255, 255, .55);
+
+  .swatch {
+    opacity: .55;
+    ;
+  }
+}

@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+github-picker {
+  position: absolute;
+  top: 100%;
+  z-index: 150;
+}

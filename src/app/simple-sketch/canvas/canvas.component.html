@@ -1,0 +1,13 @@
+<simple-sketch-toolbar *ngIf="showToolbar"></simple-sketch-toolbar>
+<section class="canvas-wrapper">
+  <canvas #canvas
+      (mousedown)="startSketch($event)"
+      (touchstart)="startSketch($event)"
+      (mouseup)="stopSketch($event)"
+      (touchend)="stopSketch($event)"
+      (mousemove)="sketch($event)"
+      (touchmove)="sketch($event)"
+  >
+  </canvas>
+</section>
+

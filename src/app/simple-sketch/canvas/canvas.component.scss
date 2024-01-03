@@ -1,0 +1,14 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.canvas-wrapper {
+  display: flex;
+  flex: 1;
+}
+
+canvas {
+  height: 100%;
+  width: 100%;
+}
