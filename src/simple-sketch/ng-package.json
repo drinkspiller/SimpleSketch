@@ -1,7 +1,17 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/simple-sketch",
+  "assets": [
+    {
+      "input": "./assets",
+      "glob": "**/*",
+      "output": "./assets"
+    }
+  ],
   "lib": {
-    "entryFile": "./public-api.ts"
+    "entryFile": "./public-api.ts",
+    "styleIncludePaths": [
+      "./assets/styles"
+    ]
   }
 }

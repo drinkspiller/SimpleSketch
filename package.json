@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "build:sass": "npx sass src/styles.scss ./src/simple-sketch/assets/styles.css --load-path=node_modules  --no-source-map",
     "start": "ng serve",
     "lt": "npx concurrently \"ng serve\" \"lt --port 4200\"",
     "build": "rm -rf ./dist && npm run ngpackagr && (cd dist/simple-sketch && npm pack)",
@@ -16,7 +17,7 @@
     "prepare": "npm run compile",
     "pretest": "npm run compile",
     "posttest": "npm run lint",
-    "prebuild": "npm run fix",
+    "prebuild": "npm run fix && npm run build:sass",
     "publish": "npm run build && npm publish dist"
   },
   "private": true,
