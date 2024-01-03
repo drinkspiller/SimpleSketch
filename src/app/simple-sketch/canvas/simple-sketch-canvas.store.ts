@@ -135,6 +135,16 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
     );
   });
 
+  readonly clearCanvas = this.effect(trigger$ =>
+    combineLatest([trigger$, this.context$, this.canvas$]).pipe(
+      tap(([, context, canvas]) => {
+        if (context && canvas) {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      })
+    )
+  );
+
   readonly init = this.effect(
     (data$: Observable<[HTMLCanvasElement, string, string]>) => {
       return data$.pipe(

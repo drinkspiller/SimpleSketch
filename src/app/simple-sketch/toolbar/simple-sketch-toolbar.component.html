@@ -20,7 +20,8 @@
     <span class="material-symbols-outlined">palette</span>
     <span class="swatch" [style.backgroundColor]="(paintColor$ | async)"></span>
   </button>
-  <button mat-icon-button aria-label="Clear Canvas">
+
+  <button mat-icon-button aria-label="Clear Canvas" (click)="clearCanvas()">
     <span class="material-symbols-outlined">restart_alt</span>
   </button>
 

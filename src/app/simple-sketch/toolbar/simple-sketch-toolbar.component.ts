@@ -42,4 +42,8 @@ export class SimpleSketchToolbarComponent {
   changePaintColor(newColor: string) {
     this.simpleSketchCanvasStore.updatePaintColor(newColor);
   }
+
+  clearCanvas() {
+    this.simpleSketchCanvasStore.clearCanvas();
+  }
 }

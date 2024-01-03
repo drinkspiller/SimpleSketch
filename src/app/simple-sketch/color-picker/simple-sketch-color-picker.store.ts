@@ -1,7 +1,16 @@
 import {Overlay, OverlayRef} from '@angular/cdk/overlay';
 import {Injectable, inject} from '@angular/core';
 import {ComponentStore} from '@ngrx/component-store';
-import {Observable, merge, of, startWith, switchMap, take, tap} from 'rxjs';
+import {
+  Observable,
+  merge,
+  of,
+  startWith,
+  switchMap,
+  take,
+  tap,
+  combineLatest,
+} from 'rxjs';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {ColorPickerMousetrapOverlayComponent} from './simple-sketch-color-picker-mousetrap-overlay.component';
 
@@ -63,9 +72,12 @@ export class SimpleSketchColorPickerStore extends ComponentStore<SimpleSketchCol
   );
 
   readonly mouseTrapOverlayClickStream = this.effect(trigger$ => {
-    return this.mouseTrapOverlay.backdropClick().pipe(
+    return combineLatest([
+      trigger$,
+      this.mouseTrapOverlay.backdropClick(),
+    ]).pipe(
       tap(() => {
-        console.log('hidden!');
+        console.log('hidden by bg click!');
         this.hideOverlay();
       })
     );
@@ -74,7 +86,7 @@ export class SimpleSketchColorPickerStore extends ComponentStore<SimpleSketchCol
   readonly showOverlay = this.effect(trigger$ => {
     return trigger$.pipe(
       tap(() => {
-        console.log('triggered');
+        console.log('showOverlay');
         this.mouseTrapOverlay.detach();
         this.mouseTrapOverlay.attach(this.mousetrapOverlayComponentPortal);
 
