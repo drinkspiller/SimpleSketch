@@ -43,6 +43,11 @@ const INITIAL_STATE: SimpleSketchCanvasState = {
   startY: 0,
 };
 
+export interface Size {
+  height: number;
+  width: number;
+}
+
 @Injectable()
 export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasState> {
   private canvas$ = new BehaviorSubject<HTMLCanvasElement | null>(null);
@@ -165,10 +170,13 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
           this.canvas$.next(canvas);
           this.context$.next(context);
 
-          const hostElement = canvas.parentElement as HTMLElement;
+          const canvasWrapper = canvas.parentElement as HTMLElement;
+          const canvasWrapperSize =
+            this.getElementSizeMinusPadding(canvasWrapper);
+
           this.updateCanvasSize([
-            hostElement.offsetWidth,
-            hostElement.offsetHeight,
+            canvasWrapperSize.width,
+            canvasWrapperSize.height,
           ]);
 
           this.updateCanvasOffsetX(canvas.offsetLeft);
@@ -181,9 +189,12 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
           fromEvent(this.window, 'resize')
             .pipe(takeUntil(this.destroy$), debounceTime(75))
             .subscribe(() => {
+              const canvasWrapperSize =
+                this.getElementSizeMinusPadding(canvasWrapper);
+
               this.updateCanvasSize([
-                hostElement.offsetWidth,
-                hostElement.offsetHeight,
+                canvasWrapperSize.width,
+                canvasWrapperSize.height,
               ]);
             });
         })
@@ -223,6 +234,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
             context.strokeStyle = paintColor;
 
             const screenPosition = this.eventPosition(event);
+
             context.lineTo(
               screenPosition.x - canvasOffsetX,
               screenPosition.y - canvasOffsetY
@@ -328,6 +340,21 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
       x: newX,
       y: newY,
     };
+  }
+
+  private getElementSizeMinusPadding(element: HTMLElement) {
+    const computedStyle = this.window.getComputedStyle(element);
+    const width =
+      element.clientWidth -
+      (parseFloat(computedStyle.paddingLeft) +
+        parseFloat(computedStyle.paddingRight)) -
+      element.offsetLeft;
+    const height =
+      element.clientHeight -
+      (parseFloat(computedStyle.paddingTop) +
+        parseFloat(computedStyle.paddingBottom)) -
+      element.offsetTop;
+    return {width, height} as Size;
   }
 
   constructor() {

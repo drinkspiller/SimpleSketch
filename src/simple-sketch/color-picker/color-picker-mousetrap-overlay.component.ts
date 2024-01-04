@@ -6,17 +6,5 @@ import {Component} from '@angular/core';
   imports: [],
   providers: [],
   template: '',
-
-  styles: [
-    `
-      .simple-sketch-overlay {
-        background-color: rgba(0, 255, 0, 0.7);
-        display: block;
-        height: 100vh;
-        pointer-events: all;
-        width: 100vw;
-      }
-    `,
-  ],
 })
 export class ColorPickerMousetrapOverlayComponent {}
