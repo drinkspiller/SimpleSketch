@@ -10,3 +10,5 @@ export * from './color-picker/color-picker.component';
 export * from './color-picker/color-picker.store';
 
 export * from './toolbar/toolbar.component';
+
+export * from './injection-tokens';
