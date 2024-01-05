@@ -258,7 +258,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
   readonly stopSketch = this.effect(
     (event$: Observable<MouseEvent | TouchEvent>) => {
       return event$.pipe(
-        tap(event => {
+        tap((event: Event) => {
           event.preventDefault();
           this.updateIsSketching(false);
         })
