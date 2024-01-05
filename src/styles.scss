@@ -51,3 +51,14 @@ body {
 .simple-sketch-mousetrap-overlay {
   z-index: 2000;
 }
+
+simple-sketch-canvas .canvas-wrapper {
+  border: 4px dashed darkmagenta;
+  background: #3f3f3f;
+  padding: 24px;
+
+  canvas {
+    border: 4px dashed gold;
+    border-radius: 16px;
+  }
+}

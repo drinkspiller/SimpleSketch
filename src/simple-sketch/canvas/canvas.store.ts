@@ -166,10 +166,14 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
       return data$.pipe(
         tap(([canvas, backgroundColor, paintColor]) => {
           const context = canvas.getContext('2d');
-
+          // Initialize canvas & context properties using the supplied `canvas`.
           this.canvas$.next(canvas);
           this.context$.next(context);
 
+          // Canvases must have their width and height pixel values set. The
+          // canvas' _parent (`.canvas-wrapper`), flexes to grow to the
+          // available space. Set the actual canvas element to the pixel
+          // dimensions available inside its parent.
           const canvasWrapper = canvas.parentElement as HTMLElement;
           const canvasWrapperSize =
             this.getElementSizeMinusPadding(canvasWrapper);
@@ -179,6 +183,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
             canvasWrapperSize.height,
           ]);
 
+          // Set some prperties in component state.
           this.updateCanvasOffsetX(canvas.offsetLeft);
           this.updateCanvasOffsetY(canvas.offsetTop);
           this.updateBackGroundColor(backgroundColor);
@@ -186,6 +191,8 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
 
           this.applyBackgroundColor();
 
+          // Subscribe to resize events so the canvas' pixel dimensions redraw
+          // using the values from the post-resize available space.
           fromEvent(this.window, 'resize')
             .pipe(takeUntil(this.destroy$), debounceTime(75))
             .subscribe(() => {
@@ -228,8 +235,11 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
             if (!isSketching || context === null) return;
             context.globalCompositeOperation =
               mode === Mode.SKETCH ? 'source-over' : 'destination-out';
+            // Make the eraser larger than the finer point brush used for
+            // sketching.
+            const eraserLineWidth = lineWidth * 1.7;
             context.lineWidth =
-              mode === Mode.SKETCH ? lineWidth : lineWidth * 1.7;
+              mode === Mode.SKETCH ? lineWidth : eraserLineWidth;
             context.lineCap = 'round';
             context.strokeStyle = paintColor;
 
@@ -248,8 +258,8 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
 
   readonly startSketch = this.effect(
     (event$: Observable<MouseEvent | TouchEvent>) => {
-      return event$.pipe(
-        tap(event => {
+      return combineLatest([event$, this.context$]).pipe(
+        tap(([event, context]) => {
           const screenPosition = this.eventPosition(
             event as unknown as MouseEvent | TouchEvent
           );
@@ -268,9 +278,8 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
         tap(([, context]) => {
           this.updateIsSketching(false);
 
-          if (context === null) return;
-          context.stroke();
-          context.beginPath();
+          context?.stroke();
+          context?.beginPath();
         })
       );
     }
@@ -347,13 +356,11 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
     const width =
       element.clientWidth -
       (parseFloat(computedStyle.paddingLeft) +
-        parseFloat(computedStyle.paddingRight)) -
-      element.offsetLeft;
+        parseFloat(computedStyle.paddingRight));
     const height =
       element.clientHeight -
       (parseFloat(computedStyle.paddingTop) +
-        parseFloat(computedStyle.paddingBottom)) -
-      element.offsetTop;
+        parseFloat(computedStyle.paddingBottom));
     return {width, height} as Size;
   }
 
