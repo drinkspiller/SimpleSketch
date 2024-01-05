@@ -3,6 +3,7 @@ import {ComponentStore} from '@ngrx/component-store';
 import {
   BehaviorSubject,
   Observable,
+  ReplaySubject,
   combineLatest,
   debounceTime,
   filter,
@@ -17,9 +18,9 @@ import {Mode} from '../toolbar/toolbar.component';
 
 export interface SimpleSketchCanvasState {
   backgroundColor: string;
-  canvasOffsetX: number;
-  canvasOffsetY: number;
   isSketching: boolean;
+  lastX: number;
+  lastY: number;
   lineWidth: number;
   mode: Mode;
   paintColor: string;
@@ -27,13 +28,18 @@ export interface SimpleSketchCanvasState {
 
 const INITIAL_STATE: SimpleSketchCanvasState = {
   backgroundColor: '#000000',
-  canvasOffsetX: 0,
-  canvasOffsetY: 0,
   isSketching: false,
+  lastX: 0,
+  lastY: 0,
   lineWidth: 5,
   mode: Mode.SKETCH,
   paintColor: '#ffffff',
 };
+
+export interface Point {
+  x: number;
+  y: number;
+}
 
 export interface Size {
   height: number;
@@ -42,8 +48,8 @@ export interface Size {
 
 @Injectable()
 export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasState> {
-  private canvas$ = new BehaviorSubject<HTMLCanvasElement | null>(null);
-  private context$ = new BehaviorSubject<CanvasRenderingContext2D | null>(null);
+  private canvas$ = new ReplaySubject<HTMLCanvasElement>(1);
+  private context$ = new ReplaySubject<CanvasRenderingContext2D>(1);
   private window = inject(WINDOW);
 
   /**
@@ -55,18 +61,6 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
     state => state.backgroundColor
   );
 
-  readonly paintColor$: Observable<string> = this.select(
-    state => state.paintColor
-  );
-
-  readonly canvasOffsetX$: Observable<number> = this.select(
-    state => state.canvasOffsetX
-  );
-
-  readonly canvasOffsetY$: Observable<number> = this.select(
-    state => state.canvasOffsetY
-  );
-
   readonly isSketching$: Observable<boolean> = this.select(
     state => state.isSketching
   );
@@ -76,6 +70,15 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
   );
 
   readonly mode$: Observable<Mode> = this.select(state => state.mode);
+
+  readonly paintColor$: Observable<string> = this.select(
+    state => state.paintColor
+  );
+
+  readonly lastPosition$: Observable<Point> = this.select(state => ({
+    x: state.lastX,
+    y: state.lastY,
+  }));
 
   /**
    * +-------------------------------------------+
@@ -94,20 +97,6 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
     isSketching,
   }));
 
-  readonly updateCanvasOffsetX = this.updater(
-    (state, newCanvasOffsetX: number) => ({
-      ...state,
-      canvasOffsetX: newCanvasOffsetX,
-    })
-  );
-
-  readonly updateCanvasOffsetY = this.updater(
-    (state, newCanvasOffsetY: number) => ({
-      ...state,
-      canvasOffsetY: newCanvasOffsetY,
-    })
-  );
-
   readonly updatePaintColor = this.updater((state, newPaintColor: string) => ({
     ...state,
     paintColor: newPaintColor,
@@ -118,14 +107,10 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
     mode: newMode,
   }));
 
-  readonly updateStartX = this.updater((state, newStartX: number) => ({
+  readonly updateLastPosition = this.updater((state, newPosition: Point) => ({
     ...state,
-    startX: newStartX,
-  }));
-
-  readonly updateStartY = this.updater((state, newStartY: number) => ({
-    ...state,
-    startY: newStartY,
+    lastX: newPosition.x,
+    lastY: newPosition.y,
   }));
 
   /**
@@ -160,7 +145,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
           const context = canvas.getContext('2d');
           // Initialize canvas & context properties using the supplied `canvas`.
           this.canvas$.next(canvas);
-          this.context$.next(context);
+          this.context$.next(context as CanvasRenderingContext2D);
 
           // Canvases must have their width and height pixel values set. The
           // canvas' _parent (`.canvas-wrapper`), flexes to grow to the
@@ -176,8 +161,6 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
           ]);
 
           // Update property values in component state.
-          this.updateCanvasOffsetX(canvas.offsetLeft);
-          this.updateCanvasOffsetY(canvas.offsetTop);
           this.updateBackGroundColor(backgroundColor);
           this.updatePaintColor(paintColor);
 
@@ -208,10 +191,9 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
         this.context$,
         this.isSketching$,
         this.lineWidth$,
-        this.canvasOffsetX$,
-        this.canvasOffsetY$,
         this.paintColor$,
         this.mode$,
+        this.lastPosition$,
       ]).pipe(
         tap(
           ([
@@ -219,10 +201,9 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
             context,
             isSketching,
             lineWidth,
-            canvasOffsetX,
-            canvasOffsetY,
             paintColor,
             mode,
+            lastPosition,
           ]) => {
             if (!isSketching || context === null) return;
             context.globalCompositeOperation =
@@ -233,14 +214,12 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
             context.lineWidth =
               mode === Mode.SKETCH ? lineWidth : eraserLineWidth;
             context.lineCap = 'round';
+            context.lineJoin = 'round';
             context.strokeStyle = paintColor;
 
-            const screenPosition = this.eventPosition(event);
+            const screenPosition = this.getEventPosition(event, context.canvas);
 
-            context.lineTo(
-              screenPosition.x - canvasOffsetX,
-              screenPosition.y - canvasOffsetY
-            );
+            context.lineTo(screenPosition.x, screenPosition.y);
             context.stroke();
           }
         )
@@ -250,22 +229,12 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
 
   readonly startSketch = this.effect(
     (event$: Observable<MouseEvent | TouchEvent>) => {
-      return combineLatest([
-        event$,
-        this.context$,
-        this.canvasOffsetX$,
-        this.canvasOffsetY$,
-      ]).pipe(
-        tap(([event, context, canvasOffsetX, canvasOffsetY]) => {
+      return combineLatest([event$, this.context$]).pipe(
+        tap(([event, context]) => {
           this.updateIsSketching(true);
 
-          const screenPosition = this.eventPosition(
-            event as unknown as MouseEvent | TouchEvent
-          );
-          context?.moveTo(
-            screenPosition.x - canvasOffsetX,
-            screenPosition.y - canvasOffsetY
-          );
+          const screenPosition = this.getEventPosition(event, context.canvas);
+          context?.moveTo(screenPosition.x, screenPosition.y);
         })
       );
     }
@@ -331,23 +300,18 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
    * Takes a mousemove or touchmove event and return the corresponding position
    * on the screen where the event occurred.
    */
-  private eventPosition(event: MouseEvent | TouchEvent): {
-    x: number;
-    y: number;
-  } {
-    const isTouchEvent = event instanceof TouchEvent;
+  private getEventPosition(
+    event: MouseEvent | TouchEvent,
+    element: HTMLCanvasElement
+  ): Point {
+    const x =
+      ((event as MouseEvent).pageX ??
+        (event as TouchEvent).targetTouches[0].pageX) - element.offsetLeft;
+    const y =
+      ((event as MouseEvent).pageY ??
+        (event as TouchEvent).targetTouches[0].pageY) - element.offsetTop;
 
-    const newX = isTouchEvent
-      ? (event as TouchEvent).touches[0].pageX
-      : (event as MouseEvent).clientX;
-    const newY = isTouchEvent
-      ? (event as TouchEvent).touches[0].pageY
-      : (event as MouseEvent).clientY;
-
-    return {
-      x: newX,
-      y: newY,
-    };
+    return {x, y};
   }
 
   /** Returns the size of a supplied element, minus its padding. */
