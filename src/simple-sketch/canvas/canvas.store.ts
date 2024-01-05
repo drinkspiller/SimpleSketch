@@ -256,12 +256,9 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
     (event$: Observable<MouseEvent | TouchEvent>) => {
       return combineLatest([event$, this.context$]).pipe(
         tap(([event, context]) => {
-          const screenPosition = this.eventPosition(
-            event as unknown as MouseEvent | TouchEvent
-          );
-
           this.updateIsSketching(true);
           context?.beginPath();
+          this.sketch(event);
         })
       );
     }
@@ -272,7 +269,6 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
       return combineLatest([event$, this.context$]).pipe(
         tap(([, context]) => {
           this.updateIsSketching(false);
-
           context?.stroke();
         })
       );
