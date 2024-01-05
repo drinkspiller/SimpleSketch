@@ -183,7 +183,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
             canvasWrapperSize.height,
           ]);
 
-          // Set some prperties in component state.
+          // Set some properties in component state.
           this.updateCanvasOffsetX(canvas.offsetLeft);
           this.updateCanvasOffsetY(canvas.offsetTop);
           this.updateBackGroundColor(backgroundColor);
@@ -267,6 +267,8 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
           this.updateIsSketching(true);
           this.updateStartX(screenPosition.x);
           this.updateStartY(screenPosition.y);
+
+          context?.beginPath();
         })
       );
     }
@@ -279,7 +281,6 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
           this.updateIsSketching(false);
 
           context?.stroke();
-          context?.beginPath();
         })
       );
     }
@@ -351,7 +352,8 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
     };
   }
 
-  private getElementSizeMinusPadding(element: HTMLElement) {
+  /** Returns the size of a supplied element, minus its padding. */
+  private getElementSizeMinusPadding(element: HTMLElement): Size {
     const computedStyle = this.window.getComputedStyle(element);
     const width =
       element.clientWidth -
