@@ -1,13 +1,23 @@
-<simple-sketch-toolbar *ngIf="showToolbar"></simple-sketch-toolbar>
+<simple-sketch-toolbar
+  *ngIf="showToolbar"
+  [mode]="mode$"
+  [backgroundColor]="backgroundColor$"
+  [paintColor]="paintColor$"
+  (backgroundColorChange)="changeBackgroundColor($event)"
+  (paintColorChange)="changePaintColor($event)"
+  (modeChange)="changeMode($event)"
+  (clearCanvas)="clearCanvas()"
+>
+</simple-sketch-toolbar>
 <section class="canvas-wrapper">
-  <canvas #canvas
-      (mousedown)="startSketch($event)"
-      (touchstart)="startSketch($event)"
-      (mouseup)="stopSketch($event)"
-      (touchend)="stopSketch($event)"
-      (mousemove)="sketch($event)"
-      (touchmove)="sketch($event)"
+  <canvas
+    #canvas
+    (mousedown)="startSketch($event)"
+    (touchstart)="startSketch($event)"
+    (mouseup)="stopSketch($event)"
+    (touchend)="stopSketch($event)"
+    (mousemove)="sketch($event)"
+    (touchmove)="sketch($event)"
   >
   </canvas>
 </section>
-

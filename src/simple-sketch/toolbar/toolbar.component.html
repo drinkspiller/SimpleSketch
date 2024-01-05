@@ -48,7 +48,7 @@
     <span class="swatch" [style.backgroundColor]="paintColor$ | async"></span>
   </button>
 
-  <button mat-icon-button aria-label="Clear Canvas" (click)="clearCanvas()">
+  <button mat-icon-button aria-label="Clear Canvas" (click)="emitClearCanvas()">
     <span class="material-symbols-outlined">restart_alt</span>
   </button>
 

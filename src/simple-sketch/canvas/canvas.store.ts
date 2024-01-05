@@ -13,11 +13,7 @@ import {
   tap,
 } from 'rxjs';
 import {WINDOW} from '../injection-tokens';
-
-export enum Mode {
-  ERASE = 'erase',
-  SKETCH = 'sketch',
-}
+import {Mode} from '../toolbar/toolbar.component';
 
 export interface SimpleSketchCanvasState {
   backgroundColor: string;

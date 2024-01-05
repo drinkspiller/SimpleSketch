@@ -6,12 +6,10 @@ import {Observable, combineLatest, tap} from 'rxjs';
 import {ColorPickerMousetrapOverlayComponent} from './color-picker-mousetrap-overlay.component';
 
 export interface SimpleSketchColorPickerState {
-  clickStream: number;
   isVisible: boolean;
 }
 
 const INITIAL_STATE: SimpleSketchColorPickerState = {
-  clickStream: 0,
   isVisible: false,
 };
 

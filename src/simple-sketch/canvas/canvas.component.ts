@@ -12,7 +12,7 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {shareReplay} from 'rxjs/operators';
-import {SimpleSketchToolbarComponent} from '../toolbar/toolbar.component';
+import {Mode, SimpleSketchToolbarComponent} from '../toolbar/toolbar.component';
 import {SimpleSketchCanvasStore} from './canvas.store';
 
 @Component({
@@ -43,6 +43,9 @@ export class SimpleSketchCanvasComponent implements AfterViewInit {
     this.simpleSketchCanvasStore.backgroundColor$.pipe(
       shareReplay({bufferSize: 1, refCount: true})
     );
+  protected readonly mode$ = this.simpleSketchCanvasStore.mode$.pipe(
+    shareReplay({bufferSize: 1, refCount: true})
+  );
   protected readonly paintColor$ =
     this.simpleSketchCanvasStore.paintColor$.pipe(
       shareReplay({bufferSize: 1, refCount: true})
@@ -57,16 +60,20 @@ export class SimpleSketchCanvasComponent implements AfterViewInit {
     ]);
   }
 
-  changeBackgroundColor(event: Event) {
-    this.simpleSketchCanvasStore.updateBackGroundColor(
-      (event.target as HTMLInputElement).value
-    );
+  changeBackgroundColor(newColor: string) {
+    this.simpleSketchCanvasStore.updateBackGroundColor(newColor);
   }
 
-  changePaintColor(event: Event) {
-    this.simpleSketchCanvasStore.updatePaintColor(
-      (event.target as HTMLInputElement).value
-    );
+  changeMode(newMode: Mode) {
+    this.simpleSketchCanvasStore.updateMode(newMode);
+  }
+
+  changePaintColor(newColor: string) {
+    this.simpleSketchCanvasStore.updatePaintColor(newColor);
+  }
+
+  clearCanvas() {
+    this.simpleSketchCanvasStore.clearCanvas();
   }
 
   sketch(event: MouseEvent | TouchEvent) {
