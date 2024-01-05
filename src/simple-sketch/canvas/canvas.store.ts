@@ -12,6 +12,7 @@ import {
   switchMap,
   takeUntil,
   tap,
+  zip,
 } from 'rxjs';
 import {WINDOW} from '../injection-tokens';
 import {Mode} from '../toolbar/toolbar.component';
@@ -186,15 +187,18 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
 
   readonly sketch = this.effect(
     (event$: Observable<MouseEvent | TouchEvent>) => {
-      return combineLatest([
-        event$,
-        this.context$,
-        this.isSketching$,
-        this.lineWidth$,
-        this.paintColor$,
-        this.mode$,
-        this.lastPosition$,
-      ]).pipe(
+      return event$.pipe(
+        switchMap(event =>
+          zip(
+            of(event),
+            this.context$,
+            this.isSketching$,
+            this.lineWidth$,
+            this.paintColor$,
+            this.mode$,
+            this.lastPosition$
+          )
+        ),
         tap(
           ([
             event,
@@ -205,22 +209,33 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
             mode,
             lastPosition,
           ]) => {
-            if (!isSketching || context === null) return;
-            context.globalCompositeOperation =
-              mode === Mode.SKETCH ? 'source-over' : 'destination-out';
-            // Make the eraser larger than the finer point brush used for
-            // sketching.
-            const eraserLineWidth = lineWidth * 5;
-            context.lineWidth =
-              mode === Mode.SKETCH ? lineWidth : eraserLineWidth;
-            context.lineCap = 'round';
-            context.lineJoin = 'round';
-            context.strokeStyle = paintColor;
+            event.preventDefault();
 
             const screenPosition = this.getEventPosition(event, context.canvas);
+            if (isSketching && context) {
+              context.beginPath();
+              context.lineCap = 'round';
+              context.lineJoin = 'round';
+              context.strokeStyle = paintColor;
 
-            context.lineTo(screenPosition.x, screenPosition.y);
-            context.stroke();
+              if (mode === Mode.SKETCH) {
+                context.lineWidth = lineWidth;
+                context.globalCompositeOperation = 'source-over';
+              } else if (mode === Mode.ERASE) {
+                // Make the eraser larger than the finer point brush used for
+                // sketching.
+                context.lineWidth = lineWidth * 5;
+                context.globalCompositeOperation = 'destination-out';
+              } else {
+                console.error('Unexpected or empty mode.');
+              }
+
+              context.moveTo(lastPosition.x, lastPosition.y);
+              context.lineTo(screenPosition.x, screenPosition.y);
+              context.stroke();
+
+              this.updateLastPosition(screenPosition);
+            }
           }
         )
       );
@@ -231,10 +246,12 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
     (event$: Observable<MouseEvent | TouchEvent>) => {
       return combineLatest([event$, this.context$]).pipe(
         tap(([event, context]) => {
+          event.preventDefault();
           this.updateIsSketching(true);
 
           const screenPosition = this.getEventPosition(event, context.canvas);
-          context?.moveTo(screenPosition.x, screenPosition.y);
+          // context?.moveTo(screenPosition.x, screenPosition.y);
+          this.updateLastPosition(screenPosition);
         })
       );
     }
@@ -242,12 +259,13 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
 
   readonly stopSketch = this.effect(
     (event$: Observable<MouseEvent | TouchEvent>) => {
-      return combineLatest([event$, this.context$]).pipe(
-        tap(([, context]) => {
+      return event$.pipe(
+        tap(event => {
+          event.preventDefault();
+
           this.updateIsSketching(false);
 
-          if (context === null) return;
-          context.beginPath();
+          // context.beginPath();
         })
       );
     }
