@@ -5,15 +5,17 @@
   height: 100%;
 }
 
+main {
+  display: contents;
+}
+
 simple-sketch-canvas {
   display: flex;
   flex: 1;
-  border: 4px solid green;
 }
 
 
-.filler-element {
+prompt-input {
   background: #3f3f3f;
-  height: 10vh;
-  border: 4px solid darkorange;
+  height: 15vh;
 }

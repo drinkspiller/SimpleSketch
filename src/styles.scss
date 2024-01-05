@@ -53,13 +53,51 @@ body {
 }
 
 simple-sketch-canvas .canvas-wrapper {
-  border: 4px dashed darkmagenta;
   background: #3f3f3f;
   padding: 24px;
 
   canvas {
-    border: 4px dashed gold;
     border-radius: 16px;
     // display: none;
+  }
+}
+
+// Material Overrides
+.mat-mdc-form-field {
+  background: #252525;
+  border-radius: 28px;
+  outline: none;
+  color: #fff;
+}
+
+input.mat-mdc-input-element::placeholder {
+  color: #a7a7a7 !important;
+  font-style: italic;
+}
+
+
+.mdc-notched-outline {
+  visibility: hidden;
+}
+
+input.mat-mdc-input-element {
+  color: #f1f1f1 !important;
+}
+
+.css-debug {
+  simple-sketch-canvas {
+    border: 4px solid green;
+  }
+
+  simple-sketch-canvas .canvas-wrapper {
+    border: 4px dashed darkmagenta;
+
+    canvas {
+      border: 4px dashed gold;
+    }
+  }
+
+  prompt-input {
+    border: 4px solid darkorange;
   }
 }

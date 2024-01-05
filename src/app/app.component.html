@@ -1,7 +1,9 @@
-<simple-sketch-canvas
-  backgroundColor="#000000"
-  paintColor="#ffffff"
-  [showToolbar]="true"
->
-</simple-sketch-canvas>
-<div class="filler-element"></div>
+<main [class.css-debug]="isDebug$ | async">
+  <simple-sketch-canvas
+    backgroundColor="#000000"
+    paintColor="#ffffff"
+    [showToolbar]="true"
+  >
+  </simple-sketch-canvas>
+  <prompt-input></prompt-input>
+</main>
