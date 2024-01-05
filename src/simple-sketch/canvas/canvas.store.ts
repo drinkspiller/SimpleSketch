@@ -27,8 +27,6 @@ export interface SimpleSketchCanvasState {
   lineWidth: number;
   mode: Mode;
   paintColor: string;
-  startX: number;
-  startY: number;
 }
 
 const INITIAL_STATE: SimpleSketchCanvasState = {
@@ -39,8 +37,6 @@ const INITIAL_STATE: SimpleSketchCanvasState = {
   lineWidth: 5,
   mode: Mode.SKETCH,
   paintColor: '#ffffff',
-  startX: 0,
-  startY: 0,
 };
 
 export interface Size {
@@ -183,7 +179,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
             canvasWrapperSize.height,
           ]);
 
-          // Set some properties in component state.
+          // Update property values in component state.
           this.updateCanvasOffsetX(canvas.offsetLeft);
           this.updateCanvasOffsetY(canvas.offsetTop);
           this.updateBackGroundColor(backgroundColor);
@@ -265,9 +261,6 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
           );
 
           this.updateIsSketching(true);
-          this.updateStartX(screenPosition.x);
-          this.updateStartY(screenPosition.y);
-
           context?.beginPath();
         })
       );

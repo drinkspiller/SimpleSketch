@@ -16,6 +16,10 @@ export interface SimpleSketchCanvasState {
     startX: number;
     startY: number;
 }
+export interface Size {
+    height: number;
+    width: number;
+}
 export declare class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasState> {
     private canvas$;
     private context$;
@@ -67,6 +71,7 @@ export declare class SimpleSketchCanvasStore extends ComponentStore<SimpleSketch
      * on the screen where the event occurred.
      */
     private eventPosition;
+    private getElementSizeMinusPadding;
     constructor();
     static ɵfac: i0.ɵɵFactoryDeclaration<SimpleSketchCanvasStore, never>;
     static ɵprov: i0.ɵɵInjectableDeclaration<SimpleSketchCanvasStore>;
