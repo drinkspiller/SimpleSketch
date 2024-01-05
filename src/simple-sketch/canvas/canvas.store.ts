@@ -1,7 +1,6 @@
 import {Injectable, inject} from '@angular/core';
 import {ComponentStore} from '@ngrx/component-store';
 import {
-  BehaviorSubject,
   Observable,
   ReplaySubject,
   combineLatest,
@@ -250,7 +249,6 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
           this.updateIsSketching(true);
 
           const screenPosition = this.getEventPosition(event, context.canvas);
-          // context?.moveTo(screenPosition.x, screenPosition.y);
           this.updateLastPosition(screenPosition);
         })
       );
@@ -262,10 +260,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
       return event$.pipe(
         tap(event => {
           event.preventDefault();
-
           this.updateIsSketching(false);
-
-          // context.beginPath();
         })
       );
     }
