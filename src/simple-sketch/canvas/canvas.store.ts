@@ -229,7 +229,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
               mode === Mode.SKETCH ? 'source-over' : 'destination-out';
             // Make the eraser larger than the finer point brush used for
             // sketching.
-            const eraserLineWidth = lineWidth * 1.7;
+            const eraserLineWidth = lineWidth * 5;
             context.lineWidth =
               mode === Mode.SKETCH ? lineWidth : eraserLineWidth;
             context.lineCap = 'round';
@@ -250,11 +250,22 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
 
   readonly startSketch = this.effect(
     (event$: Observable<MouseEvent | TouchEvent>) => {
-      return combineLatest([event$, this.context$]).pipe(
-        tap(([event, context]) => {
+      return combineLatest([
+        event$,
+        this.context$,
+        this.canvasOffsetX$,
+        this.canvasOffsetY$,
+      ]).pipe(
+        tap(([event, context, canvasOffsetX, canvasOffsetY]) => {
           this.updateIsSketching(true);
-          context?.beginPath();
-          this.sketch(event);
+
+          const screenPosition = this.eventPosition(
+            event as unknown as MouseEvent | TouchEvent
+          );
+          context?.moveTo(
+            screenPosition.x - canvasOffsetX,
+            screenPosition.y - canvasOffsetY
+          );
         })
       );
     }
@@ -265,7 +276,9 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
       return combineLatest([event$, this.context$]).pipe(
         tap(([, context]) => {
           this.updateIsSketching(false);
-          context?.stroke();
+
+          if (context === null) return;
+          context.beginPath();
         })
       );
     }
