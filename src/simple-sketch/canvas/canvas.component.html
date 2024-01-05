@@ -13,11 +13,11 @@
   <canvas
     #canvas
     (mousedown)="startSketch($event)"
-    (touchstart)="startSketch($event)"
-    (mouseup)="stopSketch($event)"
-    (touchend)="stopSketch($event)"
     (mousemove)="sketch($event)"
+    (mouseup)="stopSketch($event)"
+    (touchstart)="startSketch($event)"
     (touchmove)="sketch($event)"
+    (touchend)="stopSketch($event)"
   >
   </canvas>
 </section>
