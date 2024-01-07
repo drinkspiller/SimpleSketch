@@ -1,20 +1,19 @@
 import { ComponentStore } from '@ngrx/component-store';
 import { Observable } from 'rxjs';
+import { Mode } from '../toolbar/toolbar.component';
 import * as i0 from "@angular/core";
-export declare enum Mode {
-    ERASE = "erase",
-    SKETCH = "sketch"
-}
 export interface SimpleSketchCanvasState {
     backgroundColor: string;
-    canvasOffsetX: number;
-    canvasOffsetY: number;
     isSketching: boolean;
+    lastX: number;
+    lastY: number;
     lineWidth: number;
     mode: Mode;
     paintColor: string;
-    startX: number;
-    startY: number;
+}
+export interface Point {
+    x: number;
+    y: number;
 }
 export interface Size {
     height: number;
@@ -30,12 +29,11 @@ export declare class SimpleSketchCanvasStore extends ComponentStore<SimpleSketch
      * +-------------------------------------------+
      */
     readonly backgroundColor$: Observable<string>;
-    readonly paintColor$: Observable<string>;
-    readonly canvasOffsetX$: Observable<number>;
-    readonly canvasOffsetY$: Observable<number>;
     readonly isSketching$: Observable<boolean>;
     readonly lineWidth$: Observable<number>;
     readonly mode$: Observable<Mode>;
+    readonly paintColor$: Observable<string>;
+    readonly lastPosition$: Observable<Point>;
     /**
      * +-------------------------------------------+
      * UPDATERS
@@ -43,12 +41,9 @@ export declare class SimpleSketchCanvasStore extends ComponentStore<SimpleSketch
      */
     readonly updateBackGroundColor: (observableOrValue: string | Observable<string>) => import("rxjs").Subscription;
     readonly updateIsSketching: (observableOrValue: boolean | Observable<boolean>) => import("rxjs").Subscription;
-    readonly updateCanvasOffsetX: (observableOrValue: number | Observable<number>) => import("rxjs").Subscription;
-    readonly updateCanvasOffsetY: (observableOrValue: number | Observable<number>) => import("rxjs").Subscription;
     readonly updatePaintColor: (observableOrValue: string | Observable<string>) => import("rxjs").Subscription;
     readonly updateMode: (observableOrValue: Mode | Observable<Mode>) => import("rxjs").Subscription;
-    readonly updateStartX: (observableOrValue: number | Observable<number>) => import("rxjs").Subscription;
-    readonly updateStartY: (observableOrValue: number | Observable<number>) => import("rxjs").Subscription;
+    readonly updateLastPosition: (observableOrValue: Point | Observable<Point>) => import("rxjs").Subscription;
     /**
      * +-------------------------------------------+
      * EFFECTS
@@ -70,7 +65,8 @@ export declare class SimpleSketchCanvasStore extends ComponentStore<SimpleSketch
      * Takes a mousemove or touchmove event and return the corresponding position
      * on the screen where the event occurred.
      */
-    private eventPosition;
+    private getEventPosition;
+    /** Returns the size of a supplied element, minus its padding. */
     private getElementSizeMinusPadding;
     constructor();
     static ɵfac: i0.ɵɵFactoryDeclaration<SimpleSketchCanvasStore, never>;

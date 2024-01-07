@@ -3,7 +3,6 @@ import { ComponentStore } from '@ngrx/component-store';
 import { Observable } from 'rxjs';
 import * as i0 from "@angular/core";
 export interface SimpleSketchColorPickerState {
-    clickStream: number;
     isVisible: boolean;
 }
 export declare class SimpleSketchColorPickerStore extends ComponentStore<SimpleSketchColorPickerState> {

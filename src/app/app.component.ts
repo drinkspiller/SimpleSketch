@@ -8,12 +8,11 @@ import {
 import {SimpleSketchCanvasComponent} from '../simple-sketch/canvas/canvas.component';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {WINDOW} from '../simple-sketch/injection-tokens';
-import {PromptInputComponent} from '../prompt-input/prompt-input.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, PromptInputComponent, SimpleSketchCanvasComponent],
+  imports: [CommonModule, SimpleSketchCanvasComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
