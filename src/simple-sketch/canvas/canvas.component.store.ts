@@ -11,6 +11,7 @@ import {
   switchMap,
   takeUntil,
   tap,
+  withLatestFrom,
   zip,
 } from 'rxjs';
 import {WINDOW} from '../injection-tokens';
@@ -118,9 +119,9 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
    * EFFECTS
    * +-------------------------------------------+
    */
-  readonly applyBackgroundColor = this.effect(() => {
-    return combineLatest([this.backgroundColor$, this.canvas$]).pipe(
-      tap(([color, canvas]) => {
+  readonly applyBackgroundColor = this.effect((trigger$: Observable<void>) => {
+    return combineLatest([trigger$, this.backgroundColor$, this.canvas$]).pipe(
+      tap(([, color, canvas]) => {
         if (canvas) {
           canvas.style.backgroundColor = color;
         }
@@ -139,8 +140,8 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
   );
 
   readonly init = this.effect(
-    (data$: Observable<[HTMLCanvasElement, string, string]>) => {
-      return data$.pipe(
+    (initData$: Observable<[HTMLCanvasElement, string, string]>) => {
+      return initData$.pipe(
         tap(([canvas, backgroundColor, paintColor]) => {
           const context = canvas.getContext('2d');
           // Initialize canvas & context properties using the supplied `canvas`.
@@ -184,54 +185,53 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
     }
   );
 
-  readonly resizeCanvas = this.effect((args$: Observable<[number, number]>) => {
-    return args$.pipe(
-      switchMap(([width, height]) => {
-        return combineLatest([
-          this.canvas$,
-          this.context$,
-          of(width),
-          of(height),
-        ]);
-      }),
-      filter(
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        ([canvas, context, width, height]) =>
-          canvas !== null && context !== null
-      ),
-      tap(([canvas, context, width, height]) => {
-        // Resizing the canvas will clear its contents, so store the current
-        // canvas contents before resizing so they can be restored after.
-        const currentCanvasContent = context!.getImageData(
-          0,
-          0,
-          canvas!.width,
-          canvas!.height
-        );
+  readonly resizeCanvas = this.effect(
+    (resizeData$: Observable<[number, number]>) => {
+      return resizeData$.pipe(
+        switchMap(([width, height]) => {
+          return combineLatest([
+            this.canvas$,
+            this.context$,
+            of(width),
+            of(height),
+          ]);
+        }),
+        filter(
+          /* eslint-disable @typescript-eslint/no-unused-vars */
+          ([canvas, context, width, height]) =>
+            canvas !== null && context !== null
+        ),
+        tap(([canvas, context, width, height]) => {
+          // Resizing the canvas will clear its contents, so store the current
+          // canvas contents before resizing so they can be restored after.
+          const currentCanvasContent = context!.getImageData(
+            0,
+            0,
+            canvas!.width,
+            canvas!.height
+          );
 
-        // Now resize the canvas.
-        canvas!.width = width;
-        canvas!.height = height;
+          // Now resize the canvas.
+          canvas!.width = width;
+          canvas!.height = height;
 
-        // Reapply saved contents.
-        context!.putImageData(currentCanvasContent, 0, 0);
-      })
-    );
-  });
+          // Reapply saved contents.
+          context!.putImageData(currentCanvasContent, 0, 0);
+        })
+      );
+    }
+  );
 
   readonly sketch = this.effect(
     (event$: Observable<MouseEvent | TouchEvent>) => {
       return event$.pipe(
-        switchMap(event =>
-          zip(
-            of(event),
-            this.context$,
-            this.isSketching$,
-            this.lineWidth$,
-            this.paintColor$,
-            this.mode$,
-            this.lastPosition$
-          )
+        withLatestFrom(
+          this.context$,
+          this.isSketching$,
+          this.lineWidth$,
+          this.paintColor$,
+          this.mode$,
+          this.lastPosition$
         ),
         tap(
           ([

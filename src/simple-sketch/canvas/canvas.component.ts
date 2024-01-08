@@ -13,7 +13,7 @@ import {FormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {shareReplay} from 'rxjs/operators';
 import {Mode, SimpleSketchToolbarComponent} from '../toolbar/toolbar.component';
-import {SimpleSketchCanvasStore} from './canvas.store';
+import {SimpleSketchCanvasStore} from './canvas.component.store';
 
 @Component({
   selector: 'simple-sketch-canvas',

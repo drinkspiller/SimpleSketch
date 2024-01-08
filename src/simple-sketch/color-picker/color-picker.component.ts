@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {ColorPickerControl, ColorPickerModule} from '@iplab/ngx-color-picker';
 import {take} from 'rxjs';
-import {SimpleSketchColorPickerStore} from './color-picker.store';
+import {SimpleSketchColorPickerStore} from './color-picker.component.store';
 
 export const DEFAULT_SWATCHES = [
   '#b80000',
@@ -59,9 +59,9 @@ export class SimpleSketchColorPickerComponent {
     });
   }
 
-  protected readonly colorControl = new ColorPickerControl()
-    .setValueFrom('#ffffff')
-    .setColorPresets(DEFAULT_SWATCHES);
+  protected readonly colorControl = new ColorPickerControl().setColorPresets(
+    DEFAULT_SWATCHES
+  );
 
   protected simpleSketchColorPickerStore = inject(SimpleSketchColorPickerStore);
   protected isVisible$ = this.simpleSketchColorPickerStore.isVisible$;
