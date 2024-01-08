@@ -155,7 +155,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
           const canvasWrapperSize =
             this.getElementSizeMinusPadding(canvasWrapper);
 
-          this.updateCanvasSize([
+          this.resizeCanvas([
             canvasWrapperSize.width,
             canvasWrapperSize.height,
           ]);
@@ -174,7 +174,7 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
               const canvasWrapperSize =
                 this.getElementSizeMinusPadding(canvasWrapper);
 
-              this.updateCanvasSize([
+              this.resizeCanvas([
                 canvasWrapperSize.width,
                 canvasWrapperSize.height,
               ]);
@@ -183,6 +183,41 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
       );
     }
   );
+
+  readonly resizeCanvas = this.effect((args$: Observable<[number, number]>) => {
+    return args$.pipe(
+      switchMap(([width, height]) => {
+        return combineLatest([
+          this.canvas$,
+          this.context$,
+          of(width),
+          of(height),
+        ]);
+      }),
+      filter(
+        /* eslint-disable @typescript-eslint/no-unused-vars */
+        ([canvas, context, width, height]) =>
+          canvas !== null && context !== null
+      ),
+      tap(([canvas, context, width, height]) => {
+        // Resizing the canvas will clear its contents, so store the current
+        // canvas contents before resizing so they can be restored after.
+        const currentCanvasContent = context!.getImageData(
+          0,
+          0,
+          canvas!.width,
+          canvas!.height
+        );
+
+        // Now resize the canvas.
+        canvas!.width = width;
+        canvas!.height = height;
+
+        // Reapply saved contents.
+        context!.putImageData(currentCanvasContent, 0, 0);
+      })
+    );
+  });
 
   readonly sketch = this.effect(
     (event$: Observable<MouseEvent | TouchEvent>) => {
@@ -261,43 +296,6 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
         tap((event: Event) => {
           event.preventDefault();
           this.updateIsSketching(false);
-        })
-      );
-    }
-  );
-
-  readonly updateCanvasSize = this.effect(
-    (args$: Observable<[number, number]>) => {
-      return args$.pipe(
-        switchMap(([width, height]) => {
-          return combineLatest([
-            this.canvas$,
-            this.context$,
-            of(width),
-            of(height),
-          ]);
-        }),
-        filter(
-          /* eslint-disable @typescript-eslint/no-unused-vars */
-          ([canvas, context, width, height]) =>
-            canvas !== null && context !== null
-        ),
-        tap(([canvas, context, width, height]) => {
-          // Resizing the canvas will clear its contents, so store the current
-          // canvas contents before resizing so they can be restored after.
-          const currentCanvasContent = context!.getImageData(
-            0,
-            0,
-            canvas!.width,
-            canvas!.height
-          );
-
-          // Now resize the canvas
-          canvas!.width = width;
-          canvas!.height = height;
-
-          // Reapply saved contents/
-          context!.putImageData(currentCanvasContent, 0, 0);
         })
       );
     }
