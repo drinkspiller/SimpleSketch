@@ -39,7 +39,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/simple-sketch",
+            "outputPath": "demo",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -75,8 +75,6 @@
             },
             "development": {
               "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -121,7 +119,7 @@
         }
       }
     },
-    "ngSimpleSketch": {
+    "ngSimpleSketchLib": {
       "projectType": "library",
       "root": "simple-sketch",
       "sourceRoot": "src/simple-sketch",
@@ -142,6 +140,18 @@
           },
           "defaultConfiguration": "production"
         },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "ngSimpleSketchLib:build:production"
+            },
+            "development": {
+              "buildTarget": "ngSimpleSketchLib:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -152,7 +162,7 @@
             ]
           }
         }
-      }
+      },
     }
   },
   "cli": {

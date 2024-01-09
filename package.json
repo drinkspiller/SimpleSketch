@@ -9,7 +9,8 @@
     "ng": "ng",
     "start": "ng serve",
     "dev": "npm run start",
-    "build": "rm -rf ./dist && npm run ngpackagr && cp README.md ./dist/simple-sketch && (cd dist/simple-sketch && npm pack)",
+    "build:demo": "rm -rf ./demo && ng build",
+    "build:dist": "rm -rf ./dist && npm run ngpackagr && cp README.md ./dist/simple-sketch && (cd dist/simple-sketch && npm pack)",
     "build:sass": "npx sass src/styles.scss ./src/simple-sketch/assets/styles.css --load-path=node_modules  --no-source-map",
     "lt": "npx concurrently \"ng serve\" \"lt --port 4200\"",
     "watch": "ng build --watch --configuration development",
@@ -51,7 +52,7 @@
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.0.8",
     "@angular/cli": "^17.0.8",
-    "@angular/compiler-cli": "^17.0.0",
+    "@angular/compiler-cli": "^17.0.8",
     "@types/concurrently": "^7.0.0",
     "@types/jasmine": "~5.1.0",
     "@types/localtunnel": "^2.0.4",
