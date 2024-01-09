@@ -1,6 +1,6 @@
 import { EventEmitter } from '@angular/core';
 import { ColorPickerControl } from '@iplab/ngx-color-picker';
-import { SimpleSketchColorPickerStore } from './color-picker.store';
+import { SimpleSketchColorPickerStore } from './color-picker.component.store';
 import * as i0 from "@angular/core";
 export declare const DEFAULT_SWATCHES: string[];
 export declare class SimpleSketchColorPickerComponent {

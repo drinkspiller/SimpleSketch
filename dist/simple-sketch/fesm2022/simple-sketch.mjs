@@ -15,7 +15,7 @@ import * as i5 from '@angular/material/toolbar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import * as i2 from '@iplab/ngx-color-picker';
 import { ColorPickerControl, ColorPickerModule } from '@iplab/ngx-color-picker';
-import { tap, combineLatest, take, ReplaySubject, takeUntil, debounceTime, fromEvent, of, zip, switchMap, filter } from 'rxjs';
+import { tap, combineLatest, take, ReplaySubject, takeUntil, debounceTime, fromEvent, of, switchMap, filter, withLatestFrom } from 'rxjs';
 import { Overlay } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ComponentStore } from '@ngrx/component-store';
@@ -127,9 +127,7 @@ class SimpleSketchColorPickerComponent {
             this.simpleSketchColorPickerStore.updateIsVisible(!isVisible);
         });
     }
-    colorControl = new ColorPickerControl()
-        .setValueFrom('#ffffff')
-        .setColorPresets(DEFAULT_SWATCHES);
+    colorControl = new ColorPickerControl().setColorPresets(DEFAULT_SWATCHES);
     simpleSketchColorPickerStore = inject(SimpleSketchColorPickerStore);
     isVisible$ = this.simpleSketchColorPickerStore.isVisible$;
     changeColor() {
@@ -298,20 +296,24 @@ class SimpleSketchCanvasStore extends ComponentStore {
      * EFFECTS
      * +-------------------------------------------+
      */
-    applyBackgroundColor = this.effect(() => {
-        return combineLatest([this.backgroundColor$, this.canvas$]).pipe(tap(([color, canvas]) => {
+    applyBackgroundColor = this.effect((trigger$) => {
+        return combineLatest([
+            trigger$,
+            this.backgroundColor$,
+            this.canvas$,
+        ]).pipe(tap(([, color, canvas]) => {
             if (canvas) {
                 canvas.style.backgroundColor = color;
             }
         }));
     });
-    clearCanvas = this.effect(trigger$ => combineLatest([trigger$, this.context$, this.canvas$]).pipe(tap(([, context, canvas]) => {
+    clearCanvas = this.effect((trigger$) => combineLatest([trigger$, this.context$, this.canvas$]).pipe(tap(([, context, canvas]) => {
         if (context && canvas) {
             context.clearRect(0, 0, canvas.width, canvas.height);
         }
     })));
-    init = this.effect((data$) => {
-        return data$.pipe(tap(([canvas, backgroundColor, paintColor]) => {
+    init = this.effect((initData$) => {
+        return initData$.pipe(tap(([canvas, backgroundColor, paintColor]) => {
             const context = canvas.getContext('2d');
             // Initialize canvas & context properties using the supplied `canvas`.
             this.canvas$.next(canvas);
@@ -322,7 +324,7 @@ class SimpleSketchCanvasStore extends ComponentStore {
             // dimensions available inside its parent.
             const canvasWrapper = canvas.parentElement;
             const canvasWrapperSize = this.getElementSizeMinusPadding(canvasWrapper);
-            this.updateCanvasSize([
+            this.resizeCanvas([
                 canvasWrapperSize.width,
                 canvasWrapperSize.height,
             ]);
@@ -336,15 +338,36 @@ class SimpleSketchCanvasStore extends ComponentStore {
                 .pipe(takeUntil(this.destroy$), debounceTime(75))
                 .subscribe(() => {
                 const canvasWrapperSize = this.getElementSizeMinusPadding(canvasWrapper);
-                this.updateCanvasSize([
+                this.resizeCanvas([
                     canvasWrapperSize.width,
                     canvasWrapperSize.height,
                 ]);
             });
         }));
     });
+    resizeCanvas = this.effect((resizeData$) => {
+        return resizeData$.pipe(switchMap(([width, height]) => {
+            return combineLatest([
+                this.canvas$,
+                this.context$,
+                of(width),
+                of(height),
+            ]);
+        }), filter(
+        /* eslint-disable @typescript-eslint/no-unused-vars */
+        ([canvas, context, width, height]) => canvas !== null && context !== null), tap(([canvas, context, width, height]) => {
+            // Resizing the canvas will clear its contents, so store the current
+            // canvas contents before resizing so they can be restored after.
+            const currentCanvasContent = context.getImageData(0, 0, canvas.width, canvas.height);
+            // Now resize the canvas.
+            canvas.width = width;
+            canvas.height = height;
+            // Reapply saved contents.
+            context.putImageData(currentCanvasContent, 0, 0);
+        }));
+    });
     sketch = this.effect((event$) => {
-        return event$.pipe(switchMap(event => zip(of(event), this.context$, this.isSketching$, this.lineWidth$, this.paintColor$, this.mode$, this.lastPosition$)), tap(([event, context, isSketching, lineWidth, paintColor, mode, lastPosition,]) => {
+        return event$.pipe(withLatestFrom(this.context$, this.isSketching$, this.lineWidth$, this.paintColor$, this.mode$, this.lastPosition$), tap(([event, context, isSketching, lineWidth, paintColor, mode, lastPosition,]) => {
             event.preventDefault();
             const screenPosition = this.getEventPosition(event, context.canvas);
             if (isSketching && context) {
@@ -384,27 +407,6 @@ class SimpleSketchCanvasStore extends ComponentStore {
         return event$.pipe(tap((event) => {
             event.preventDefault();
             this.updateIsSketching(false);
-        }));
-    });
-    updateCanvasSize = this.effect((args$) => {
-        return args$.pipe(switchMap(([width, height]) => {
-            return combineLatest([
-                this.canvas$,
-                this.context$,
-                of(width),
-                of(height),
-            ]);
-        }), filter(
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        ([canvas, context, width, height]) => canvas !== null && context !== null), tap(([canvas, context, width, height]) => {
-            // Resizing the canvas will clear its contents, so store the current
-            // canvas contents before resizing so they can be restored after.
-            const currentCanvasContent = context.getImageData(0, 0, canvas.width, canvas.height);
-            // Now resize the canvas
-            canvas.width = width;
-            canvas.height = height;
-            // Reapply saved contents/
-            context.putImageData(currentCanvasContent, 0, 0);
         }));
     });
     /**

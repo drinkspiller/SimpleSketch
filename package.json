@@ -21,7 +21,7 @@
     "ng": "ng",
     "ngpackagr": "npx ng-packagr -p src/simple-sketch/ng-package.json",
     "posttest": "npm run lint",
-    "prebuild": "npm run fix && npm run build:sass",
+    "prebuild:dist": "npm run fix && npm run build:sass",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
     "publish": "npm run build && npm publish ./dist/simple-sketch --verbose",
