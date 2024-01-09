@@ -12,7 +12,6 @@ import {
   takeUntil,
   tap,
   withLatestFrom,
-  zip,
 } from 'rxjs';
 import {WINDOW} from '../injection-tokens';
 import {Mode} from '../toolbar/toolbar.component';
