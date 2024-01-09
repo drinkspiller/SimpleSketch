@@ -24,7 +24,7 @@
     "prebuild:dist": "npm run fix && npm run build:sass",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
-    "publish": "npm run build && npm publish ./dist/simple-sketch --verbose",
+    "publish": "npm run build:dist && npm publish ./dist/simple-sketch --verbose",
     "start:dev": "ng serve --configuration development",
     "start:prod": "ng serve --configuration production",
     "test": "ng test",
