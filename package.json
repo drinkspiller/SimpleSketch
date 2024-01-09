@@ -9,7 +9,7 @@
     "ng": "ng",
     "start": "ng serve",
     "dev": "npm run start",
-    "build:demo": "rm -rf ./demo && ng build",
+    "build:demo": "rm -rf ./demo && ng build --base-href ./",
     "build:dist": "rm -rf ./dist && npm run ngpackagr && cp README.md ./dist/simple-sketch && (cd dist/simple-sketch && npm pack)",
     "build:sass": "npx sass src/styles.scss ./src/simple-sketch/assets/styles.css --load-path=node_modules  --no-source-map",
     "lt": "npx concurrently \"ng serve\" \"lt --port 4200\"",
