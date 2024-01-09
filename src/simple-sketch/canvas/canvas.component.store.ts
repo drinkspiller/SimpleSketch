@@ -118,17 +118,23 @@ export class SimpleSketchCanvasStore extends ComponentStore<SimpleSketchCanvasSt
    * EFFECTS
    * +-------------------------------------------+
    */
-  readonly applyBackgroundColor = this.effect((trigger$: Observable<void>) => {
-    return combineLatest([trigger$, this.backgroundColor$, this.canvas$]).pipe(
-      tap(([, color, canvas]) => {
-        if (canvas) {
-          canvas.style.backgroundColor = color;
-        }
-      })
-    );
-  });
+  readonly applyBackgroundColor = this.effect<void>(
+    (trigger$: Observable<void>) => {
+      return combineLatest([
+        trigger$,
+        this.backgroundColor$,
+        this.canvas$,
+      ]).pipe(
+        tap(([, color, canvas]) => {
+          if (canvas) {
+            canvas.style.backgroundColor = color;
+          }
+        })
+      );
+    }
+  );
 
-  readonly clearCanvas = this.effect(trigger$ =>
+  readonly clearCanvas = this.effect<void>((trigger$: Observable<void>) =>
     combineLatest([trigger$, this.context$, this.canvas$]).pipe(
       tap(([, context, canvas]) => {
         if (context && canvas) {
